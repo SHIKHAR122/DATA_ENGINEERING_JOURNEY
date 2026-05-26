@@ -68,3 +68,117 @@ emp1.display_info()
 emp1.appraisal()
 emp2.display_info()
 emp2.appraisal()
+
+
+
+
+
+# ============================================
+# OOP PRACTICE - DAY 2 - QUESTION 3
+# Topic: Classes and Objects
+# Date: 26 May 2026
+# ============================================
+
+# Create a Library class with the following:
+# - Attributes: book_name, author, is_available (True by default)
+# - Method display_info() that prints all three attributes
+# - Method borrow_book() that:
+#       checks if book is available
+#       if yes: marks it unavailable and prints "Book borrowed successfully"
+#       if no: prints "Sorry, book is not available"
+# - Method return_book() that:
+#       marks the book as available again
+#       prints "Book returned successfully"
+
+# Create 2 book objects.
+# Borrow the first book.
+# Try borrowing the first book again (should show not available).
+# Return the first book.
+# Borrow it again (should work now).
+# Display info of both books at the end.
+
+# YOUR CODE HERE:
+class Library:
+    def __init__(self,book_name , author ,is_available=True):
+        self.book_name= book_name 
+        self.author=author 
+        self.is_available=is_available
+    def display_info(self):
+        print("BOOK NAME IS :",self.book_name)
+        print("BOOK'S AUTHOR NAME IS :", self.author)
+    def borrow_book(self):
+        if self.is_available is True:
+            self.is_available=False
+            print("Book Borrowed successfully")
+        else:
+            print("Sorry, Book Not Available ")
+
+    def return_book(self):
+        self.is_available = True
+        print("Book Returned Successfully")
+book1= Library("HAMLET","WILLIAM SHAKESPEARE")
+book2=Library("HARRY POTTERS","J.K. ROWLING ")
+book1.borrow_book()
+book1.borrow_book()
+book1.return_book()
+book1.borrow_book()
+book1.display_info()
+# ============================================
+# OOP PRACTICE - DAY 2 - QUESTION 4 
+# Topic: Classes and Objects
+# Date: 26 May 2026
+# ============================================
+
+# Create a Cart class for an online shopping cart:
+# - Attributes: user_name, items (empty list by default), total_price (0 by default)
+# - Method add_item(item_name, price) that:
+#       adds item_name to the items list
+#       adds price to total_price
+#       prints "item_name added to cart"
+# - Method remove_item(item_name, price) that:
+#       checks if item is in the list
+#       if yes: removes it, subtracts price, prints "item_name removed from cart"
+#       if no: prints "item_name not found in cart"
+# - Method display_cart() that:
+#       prints user_name
+#       prints all items in the cart
+#       prints total price
+
+# Create 1 cart object for yourself.
+# Add 3 items with prices.
+# Remove 1 item that exists.
+# Try removing 1 item that doesn't exist.
+# Display the final cart.
+
+# YOUR CODE HERE:
+class Cart:
+    def __init__(self,user_name, items=[],total_price=0):
+        self.user_name=user_name 
+        self.items=items
+        self.total_price=total_price
+    def add_item(self,item_name , price):
+        self.price=price
+        self.item_name=item_name
+        self.items.append(item_name)
+        self.total_price+=price
+    def remove_item(self, item_name, price):
+        if item_name in self.items:
+            self.items.remove(item_name)
+            self.total_price -= price
+            print(f"{item_name} removed from cart")
+        else:
+            print(f"{item_name} not found in cart")
+    def display_cart(self):
+        print("USER NAME IS : ",self.user_name)
+        print("ITEMS IN THE CART ARE : ",self.items)
+        print("THE TOTAL PRICE IS : ",self.total_price) 
+
+
+
+my_cart = Cart("Shikhar")
+my_cart.add_item("Laptop", 45000)
+my_cart.add_item("Mouse", 800)
+my_cart.add_item("Keyboard", 1500)
+my_cart.remove_item("Mouse", 800)
+my_cart.remove_item("Headphones", 2000)
+my_cart.display_cart()
