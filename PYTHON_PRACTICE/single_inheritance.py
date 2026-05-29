@@ -101,3 +101,65 @@ account1.deposit(12000)
 account1.add_interest()
 account1.display_info()
 
+
+
+
+# QUESTION 3 - Harder
+# Create a parent class Employee with:
+# - Attributes: name, company, salary
+# - Method display_info() that prints all three
+# - Method give_raise(amount) that adds amount to salary
+#       and prints "New salary is: X"
+#
+# Create a child class Manager that inherits from Employee with:
+# - Additional attribute: team_size
+# - Override give_raise(amount) to give DOUBLE the raise amount
+#       because managers get double raises
+#       prints "Manager raise applied. New salary is: X"
+# - Method display_info() that prints everything from
+#       Employee display_info() PLUS team_size
+#       hint: use super() here
+#
+# Create 1 Employee and 1 Manager object.
+# Give both a raise of 10000.
+# Employee should get 10000 added.
+# Manager should get 20000 added.
+# Display info of both at the end.
+
+# YOUR CODE HERE:
+
+class Employee:
+    def __init__(self,name,company,salary):
+        self.name=name
+        self.company=company
+        self.salary=salary
+    def display_info(self):
+        print("{}  IS NAME OF THE EMPLOYEE ,THEY WORK FOR {} ,AND THEIR SALARY IS {} ".format(self.name,self.company,self.salary))
+    
+    def give_raise(self,amount):
+        self.salary+=amount
+        print("THE NEW SALARY IS: {} ".format(self.salary))
+    
+class Manager(Employee):
+    def __init__(self,name,company,salary,team_size):
+        super().__init__(name,company,salary)
+        self.team_size=team_size
+
+    def give_raise(self, amount):
+       super().give_raise(amount=amount)
+       
+       self.salary+=2*amount
+       print("Manager raise applied. New salary is: {} ".format(self.salary))
+    
+    def display_info(self):
+         super().display_info()
+         print("TEAM SIZE IS: {} ".format(self.team_size))
+
+employee1=Employee("SHIKHAR","GOOGLE",90000)
+manager1=Manager("SHIVAM","APPLE",80000,5)
+employee1.give_raise(10000)
+manager1.give_raise(10000)
+employee1.display_info()
+manager1.display_info()
+
+
