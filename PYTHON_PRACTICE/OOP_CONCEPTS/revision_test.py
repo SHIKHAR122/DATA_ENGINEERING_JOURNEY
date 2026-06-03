@@ -1,7 +1,6 @@
 # ============================================
 # OOP REVISION TEST
 # Date: 2 June 2026
-# No Googling. No scrolling up. Timer on.
 # ============================================
 
 # CODING QUESTION 1
@@ -28,11 +27,47 @@
 # Display all 3 patients — all should show PGI.
 
 # YOUR CODE HERE:
+class Hospital:
+    hospital_name="AIIMS"
+    patient_count=0
+    def __init__(self,patient_name, age, disease):
+        self.patient_name=patient_name
+        self.age=age
+        self.disease=disease
+        Hospital.patient_count+=1
+    @property
+    def details(self):
+        return ("{} | {} years old | {}".format(self.patient_name,self.age,self.disease))
+    
+
+    @classmethod
+    def change_hospital(cls, name):
+        cls.hospital_name=name
+
+    @classmethod
+    def get_patient_count(cls):
+        print("TOTAL PATIENTS ADMITTED IN THE HOSPITALS ARE {}".format(cls.patient_count))
+
+    @staticmethod
+    def is_valid_age(age):
+        if age >=0 or age<=120:
+            return True 
+        else: return False
+    def display(self):
+        print("HOSPITAL NAME IS {} AND THE DETAILS OF THE PATIENT ARE :{} | {} YEARS OLD | {} IS THE DISEASE".format(self.hospital_name,self.patient_name,self.age,self.disease))
 
 
-
+pt1=Hospital("SHIKHAR", 21 , "TYPHOID")
+pt2=Hospital("JESSE", 45, "TB")
+pt3=Hospital("NICHOLAS",36,"ASTHMA")
+Hospital.get_patient_count()
+Hospital.change_hospital("PGI")
+pt1.display()
+pt2.display()
+pt3.display()
 
 # ============================================
+
 
 # CODING QUESTION 2
 # Create a 3 level inheritance chain:
@@ -59,9 +94,43 @@
 # Print is_eco_friendly().
 
 # YOUR CODE HERE:
+class Vehicle:
+    def __init__(self,brand, speed,**kwargs):
+        super().__init__(**kwargs)
+        self.brand=brand
+        self.speed=speed
+        
+    def display(self):
+        print("THE BRAND IS {} AND THE SPEED IS {}".format(self.brand,self.speed))
+    
+class  Car(Vehicle):
+    def __init__(self,num_doors,**kwargs):
+        super().__init__(**kwargs)
+        self.num_doors=num_doors
+    def display(self):
+        super().display()
+        print("NUMBER OF DOORS ARE - {}".format(self.num_doors))
 
+class ElectricCar(Car):
+    def __init__(self,battery,**kwargs):
+        super().__init__(**kwargs)
+        self.battery=battery
+    def display(self):
+        super().display()
+        print("THE BATTERY IS :{}".format(self.battery))
+    @property
+    def range_km(self):
+        return self.battery*6
+    @staticmethod
+    def is_eco_friendly():
+        return True
+    
+ec1=ElectricCar(brand="TESLA",speed="200km/hr",num_doors=4,battery=50)
+ec1.display()
+print(ec1.range_km)
+print(ElectricCar.is_eco_friendly())
 
-# ============================================
+# ===========================================
 
 # CODING QUESTION 3
 # Create a class Student with:
@@ -89,6 +158,45 @@
 # Try setting marks to 150 — should raise ValueError.
 
 # YOUR CODE HERE:
+class Student:
+    def __init__(self,name,college,marks):
+        self.marks=marks
+        self.name=name
+        self.college=college
+    @property
+    def marks(self):
+        return self._marks
+    @marks.setter
+    def marks(self, marks):
+        if 0 <= marks <= 100:
+            self._marks = marks
+        else:
+            raise ValueError("INVALID MARKS")
+    @property
+    def grade(self):
+        if self.marks>=90:
+            return "A"
+        elif self.marks>=75:
+            return"B"
+        elif self.marks>=60:
+            return "C"
+        elif self.marks>=40:
+            return "D"
+        else: return "F"
+    @classmethod
+    def from_dict(cls,data):
+        name=data["name"]
+        college=data["college"]
+        marks=data["marks"]
+        return cls(name,college,marks)
+        
+    def display(self):
+        print("NAME OF THE STUDENT {} | COLLEGE NAME IS {} |  MARKS ARE {} | AND GRADES ARE {}".format(self.name,self.college,self.marks,self.grade))
+
+st1=Student("ADITYA" , "MAIT"  , 99 )
+st2=Student.from_dict({"name": "Shikhar", "college": "PSIT", "marks": 95})
+st1.display()
+st2.display()
 
 
 # ============================================
@@ -118,8 +226,40 @@
 # Print FlyingFish.__mro__ and write a comment.
 
 # YOUR CODE HERE:
+class Flyable:
+    def __init__(self,max_altitude,**kwargs):
+        super().__init__(**kwargs)
+        self.max_altitude=max_altitude
+
+    def abilities(self):
+        print("THE MAXIMUM ALTITUDE IS : {}".format(self.max_altitude))
+
+class Swimmable:
+    def __init__(self,max_depth,**kwargs):
+        super().__init__(**kwargs)
+        self.max_depth=max_depth
+    def abilities(self):
+        print("THE MAXIMUM DEPTH IS : {}".format(self.max_depth))
+
+class FlyingFish(Flyable , Swimmable):
+    def __init__(self,name, **kwargs):
+        super().__init__(**kwargs)
+        self.name=name 
+    def abilities(self):
+         print("NAME IS {}".format(self.name))
+         Flyable.abilities(self)
+         Swimmable.abilities(self)
+    @property
+    def description(self):
+        return ("{} CAN FLY UPTO {} AND SWIM UPTO {}".format(self.name , self.max_altitude , self.max_depth))
+    
+ff1=FlyingFish(name="MARIO" , max_depth=120 , max_altitude=500)
+ff1.abilities()
+print(ff1.description)
+print(FlyingFish.__mro__)
 
 
+  
 # ============================================
 
 # CODING QUESTION 5 — HARDEST
@@ -143,3 +283,31 @@
 # calculate_volume(2, -3, 4) → should print invalid
 
 # YOUR CODE HERE:
+def validate_input(func):
+    def wrapper_function(*args ,**kwargs):
+        for value in args:
+            if value<=0:
+                print("Invalid input — all values must be positive")
+                return 
+        return func(*args,**kwargs)
+    return wrapper_function
+
+
+
+@validate_input
+def calculate_area(length,breadth,**kwargs):
+    print("AREA IS :",length*breadth)
+
+@validate_input
+def calculate_volume(l,b,h):
+    print("VOLUME IS :",l*b*h)
+
+
+
+calculate_area(5, 10)
+
+calculate_area(-5, 10)
+
+calculate_volume(2, 3, 4)
+
+calculate_volume(2, -3, 4)
