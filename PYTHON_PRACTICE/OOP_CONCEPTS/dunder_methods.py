@@ -120,20 +120,223 @@ print(e1==e2)
 print(e1==e3)
 print(e1<e2)
 print(e2<e3)
-# ------------------------------------------------------------
-# Q5: __enter__ and __exit__ (Context Manager)
-# ------------------------------------------------------------
-# Create a class `Timer` that acts as a context manager to measure
-# the time taken by a block of code.
-# - Use __enter__ to record the start time.
-# - Use __exit__ to calculate and print the elapsed time.
-# Hint: Use the `time` module.
+
+
+
+# ============================================
+# OOP PRACTICE - DAY 8
+# Topic: Dunder Methods
+# Date: 5 June 2026
+# ============================================
+
+# QUESTION 1 - Easy
+# Create a class Book with:
+# - Attributes: title, author, pages
+# - __str__ that returns:
+#   "title by author"
+# - __repr__ that returns:
+#   "Book('title', 'author', pages)"
+# - __len__ that returns number of pages
 #
-# Expected Output:
-#   with Timer():
-#       total = sum(range(1_000_000))
-#   >>> Elapsed time: 0.0523 seconds   (time will vary)
+# Create 2 Book objects.
+# Print both using print() — calls __str__
+# Print both using repr() — calls __repr__
+# Print len() of both — calls __len__
 
 # YOUR CODE HERE:
-class Timer:
-    def __init__(self,):
+class Book:
+    def __init__(self,title,author,pages):
+        self.title=title
+        self.author=author
+        self.pages=pages
+    def __str__(self):
+        return ("{}  BY {}".format(self.author,self.title))
+    def __repr__(self):
+        return "Book('{}', '{}', {})".format(self.title, self.author, self.pages)
+    def __len__(self):
+        return self.pages
+    
+book1= Book("Dark Matter" , "BLAKE COUCH" , 500)
+book2=Book("Flowers for Algernon" ,  "Daniel Keyes" , 311)
+print("FIRST BOOK IS : ",book1)
+print("SECOND BOOK IS :",book2)
+print(repr(book1))
+print(repr(book2))
+print("LENGTH OF PAGES IN BOOK 1 IS : ",len(book1))
+print("LENGTH OF PAGES IN BOOK 2 IS : ",len(book2))
+# ============================================
+
+# QUESTION 2 - Medium
+# Create a class Cart with:
+# - Attribute: items — empty list by default
+# - Attribute: owner
+# - Method add_item(item) that appends to items list
+# - __len__ that returns number of items in cart
+# - __str__ that returns:
+#   "owner's cart has X items: [item1, item2...]"
+# - __repr__ that returns:
+#   "Cart(owner='owner', items=X)"
+#
+# Create 1 cart.
+# Add 3 items.
+# Print the cart — calls __str__
+# Print repr(cart) — calls __repr__
+# Print len(cart) — calls __len__
+
+# YOUR CODE HERE:
+class Cart:
+    
+    def __init__(self,owner):
+        self.items=[]
+        self.owner=owner
+    def add_item(self,item):
+        self.items.append(item)
+     
+    def __len__(self):
+        return len(self.items)
+
+    def __str__(self):
+        return ("{} CART HAS {} ITEMS".format(self.owner , self.items))
+    
+    def __repr__(self):
+        return "Cart(owner='{}', items={})".format(self.owner, len(self.items))
+cart1=Cart("shikhar",)
+cart1.add_item("APPLE")
+cart1.add_item("COFFEE BEANS")
+cart1.add_item("BANANA")
+cart1.add_item("MUG")
+print(str(cart1))
+print(repr(cart1))
+print(len(cart1))
+
+    
+
+
+
+# ============================================
+
+# QUESTION 3 - Medium
+# Create a class Team with:
+# - Attribute: team_name
+# - Attribute: members — empty list by default
+# - Method add_member(name) that appends to members 
+# - __len__ that returns number of members//
+# - __str__ that returns:
+#   "Team team_name has X members"
+# - __repr__ that returns:
+#   "Team('team_name', members=X)"
+# - __contains__ that checks if a name is in members
+#   this is called when you do: "Shikhar" in team
+#
+# Create 1 team.
+# Add 4 members.
+# Print the team.
+# Print repr(team).
+# Print len(team).
+# Check if "Shikhar" is in team — print the result.
+# Check if "Random" is in team — print the result.
+
+# YOUR CODE HERE:
+class Team:
+    def __init__(self, team_name):
+        self.team_name = team_name
+        self.members = []
+
+    def add_member(self, name):
+        self.members.append(name)
+
+    def __len__(self):
+        return len(self.members)
+
+    def __str__(self):
+        return f"Team {self.team_name} has {len(self)} members"
+
+    def __repr__(self):
+        return f"Team('{self.team_name}', members={len(self)})"
+
+    def __contains__(self, name):
+        return name in self.members
+
+
+team = Team("Risers")
+team.add_member("Shikhar")
+team.add_member("Rohit")
+team.add_member("Virat")
+team.add_member("Hardik")
+
+print(team)                        
+print(repr(team))                  
+print(len(team))                   
+print("Shikhar" in team)           
+print("Random" in team)            
+
+
+
+    
+# ============================================
+
+# QUESTION 4 - Harder
+# Create a class StudentGrades with:
+# - Attribute: student_name
+# - Attribute: grades — empty list by default
+# - Method add_grade(grade) that appends to grades
+# - __len__ that returns number of grades
+# - __str__ that returns:
+#   "student_name has X grades. Average: Y"
+#   where Y is the average rounded to 2 decimal places
+# - __repr__ that returns:
+#   "StudentGrades('student_name', grades=X)"
+# - __getitem__ that returns grade at a given index
+#   this is called when you do: student[0]
+# - @property average that calculates and returns
+#   sum of grades divided by number of grades
+#   if no grades: return 0
+#
+# Create 1 StudentGrades object.
+# Add 5 grades.
+# Print the object — calls __str__
+# Print repr — calls __repr__
+# Print len — calls __len__
+# Access individual grades using indexing:
+#   print(student[0])
+#   print(student[2])
+
+# YOUR CODE HERE:
+class StudentGrades:
+    def __init__(self,student_name):
+        self.student_name=student_name
+        self.grades=[]
+    def add_grade(self,grade):
+        self.grades.append(grade)
+    def __len__(self):
+        return len(self.grades)
+    def __str__(self):
+        return ("{} HAS {} GRADES AND AVG. SCORE IS {} ".format(self.student_name,len(self.grades),self.average))
+    def __repr__(self):
+        return "StudentGrades('{}'   ' GRADES = {}')".format(self.student_name, len(self.grades))
+    def  __getitem__(self, key):
+        return self.grades[key]
+    @property
+    def average(self):
+        if len(self.grades)==0:
+            return 0
+        else:
+            return sum(self.grades)/len(self.grades)
+
+
+
+student = StudentGrades("Alice")
+student.add_grade(85)
+student.add_grade(92)
+student.add_grade(78)
+student.add_grade(96)
+student.add_grade(88)
+
+
+print(student)          
+print(repr(student))    
+print(len(student))     
+print(student[0])       
+print(student[2])       
+
+            
