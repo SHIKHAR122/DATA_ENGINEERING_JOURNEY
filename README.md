@@ -1,7 +1,7 @@
 # 🚀 My Data Engineering Journey
 
 > **Shikhar Sharma** — PSIT Kanpur, Batch 2027  
-> Targeting a **Data Engineer role (10–18 LPA)** by mid-2027  
+> Targeting a **Data Engineer role ** by mid-2027  
 > Building in public. Every commit counts.
 
 ---
@@ -13,15 +13,6 @@ I'm a Computer Science student from PSIT Kanpur, currently building the skills a
 No shortcuts. No shortcuts. Just consistent daily execution.
 
 ---
-
-## 🎯 Goal
-
-| Target | Details |
-|--------|---------|
-| Role | Data Engineer |
-| Target CTC | 10–18 LPA |
-| Timeline | Mid 2027 |
-| Strategy | Off-campus → Startups, Fintech, Analytics firms |
 
 ---
 
@@ -148,14 +139,6 @@ my-de-journey/
 - [ ] LinkedIn 500+ connections
 
 ---
-
-## 📈 Current Stats
-
-- 🟩 **Started:** May 25, 2026
-- 💻 **LeetCode Problems Solved:** 2
-- 📂 **Projects Completed:** 1 (Query Forge)
-- 🔥 **Current Streak:** Day 1
-
 ---
 
 ## 📬 Connect With Me
