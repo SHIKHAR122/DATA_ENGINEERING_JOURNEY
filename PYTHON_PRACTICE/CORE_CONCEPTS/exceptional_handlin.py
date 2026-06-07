@@ -19,8 +19,23 @@
 # divide("10", 2)  → Invalid input — numbers only
 
 # YOUR CODE HERE:
+def function(a , b):
+    try:
+        result= b /a 
+        print(result)
 
+    except ZeroDivisionError:
+        print("Cannot divide by Zero")
 
+    except TypeError:
+        print("Invalid input — numbers only")
+
+    finally:
+        print("Division attempted")
+
+function(10,2)
+function(10,0)
+function("10" , 2)
 # ============================================
 
 # QUESTION 2 - Easy
@@ -38,8 +53,20 @@
 # get_element([1,2,3], "one") → Index must be an integer
 
 # YOUR CODE HERE:
+def get_elements(lst , index):
+    try:
+        print(lst[index])
+    except IndexError:
+        print("Index Out of Range")
+    except TypeError:
+        print("Index must be an integer")
+    finally:
+        print("Operation complete")
+get_elements([1, 2, 3], 1)
 
+get_elements([1, 2, 3], 10)
 
+get_elements([1, 2, 3], "one")
 # ============================================
 
 # QUESTION 3 - Medium
@@ -60,7 +87,29 @@
 # read_age("150")   → Age out of valid range
 
 # YOUR CODE HERE:
+def read_age(value):
+    try:
+        try:
+            age = int(value)
+        except ValueError:
+            raise ValueError("Age must be number ")
+        
+        if age <0 or age>120:
+            raise ValueError("Age out of valid range")
+        print("Valid age : {}".format(age))
 
+    except ValueError as e  :
+        print(e)
+    
+    finally:
+        print("Age validation complete ")
+
+read_age("25")    
+read_age("abc")   
+read_age("-5")    
+read_age("150")    
+       
+    
 
 # ============================================
 
@@ -86,8 +135,28 @@
 #     print(e)
 
 # YOUR CODE HERE:
+class InsufficientFundsError(Exception):
+    def __init__(self,amount,balance):
+        self.amount=amount
+        self.balance=balance
+        super().__init__("CANNOT WITHDRAW {} AVAILABLE BALANCE {}".format(self.amount , self.balance))
 
-
+class BankAccount:
+    def __init__(self,balance):
+        self.balance=balance
+    
+    def withdraw(self,amount):
+        if amount>self.balance:
+            raise InsufficientFundsError(amount,self.balance)
+        else:
+            self.balance-=amount
+            print("NEW BALANCE: {}".format(self.balance))
+account=BankAccount(50000)
+try:
+    account.withdraw(10000)
+    account.withdraw(99999)
+except InsufficientFundsError as e:
+    print(e)
 # ============================================
 
 # QUESTION 5 - Harder
