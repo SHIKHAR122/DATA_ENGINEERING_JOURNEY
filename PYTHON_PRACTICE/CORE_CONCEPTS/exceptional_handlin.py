@@ -21,7 +21,7 @@
 # YOUR CODE HERE:
 def function(a , b):
     try:
-        result= b /a 
+        result= a / b
         print(result)
 
     except ZeroDivisionError:
@@ -180,3 +180,111 @@ except InsufficientFundsError as e:
 # Test all three error cases plus valid cases.
 
 # YOUR CODE HERE:
+class InvalidGradeException(Exception):
+    def __init__(self,subject,grade):
+        super().__init__("INVALID GRADES {} FOR SUBJECT {}".format(grade,subject))
+
+
+
+class GradeBook:
+    def __init__(self,student_name):
+        self.student_name=student_name
+        self.grades={}
+        
+    def add_grade(self,subject,grade):
+        if grade<0 or grade>100:
+            raise InvalidGradeException(grade,subject)
+        
+            self.grades[subject]=grade
+    def get_grade(self , subject):
+        if subject not in self.grades:
+            raise KeyError("Subject not found....")
+    def average(self ):
+        if len(self.grades)==0:
+            raise ValueError("No Grades Available")
+        else: avg =sum(self.grades.values())/len(self.grades) 
+        return round(avg,2)
+
+gb=GradeBook("shikhar")
+try:
+    print(gb.average())
+except ValueError as e:
+    print(e)
+
+try:
+    gb.add_grade("MATHS", 1290)
+except InvalidGradeException as e:
+    print(e)
+
+gb.add_grade("Maths", 95)
+
+gb.add_grade("Physics", 88)
+
+gb.add_grade("Chemistry", 92)
+
+print("Maths Grade:", gb.get_grade("Maths"))
+
+print("Average:", gb.average())
+# ============================================
+# EXCEPTION HANDLING EXTRA PRACTICE
+# Date: 7 June 2026
+# ============================================
+
+# QUESTION A
+# Create custom exception: NegativeValueError(Exception)
+# Create a class Inventory with:
+# - Attribute: items — empty dict
+# - Method add_item(name, quantity) that:
+#       raises NegativeValueError if quantity < 0
+#       with message "Quantity cannot be negative: X"
+#       otherwise adds to items dict
+# - Method remove_item(name, quantity) that:
+#       raises KeyError if item not in inventory
+#       raises NegativeValueError if quantity > available
+#       with message "Not enough stock for name"
+#       otherwise reduces quantity
+# - Method display() that prints all items
+#
+# Test all error cases plus valid cases.
+
+# YOUR CODE HERE:
+class NegativeValueException(Exception):
+    def __init__(self,quantity):
+        super().__init__("QUANTITY CANNOT BE NEGATIVE :{}".format(quantity))
+class Inventory:
+    def __init__(self,items):
+        self.items={}
+    def add_items(self , name,quantity):
+        if quantity<0:
+            raise NegativeValueException(quantity)
+        else: self.items[name]=quantity
+
+    def remove_item(self,name,quantity):
+        if name not in self.items:
+            raise  KeyError("{} NOT FOUND IN THE INVENTORY ".format(name))
+        if quantity>self.items[name]:
+            raise  NegativeValueException("NOT ENOUGH STOCK FOR {}".format(name))
+        else : self.items[name]-=quantity
+    def display(self):
+        for item , quantity in self.items.items():
+            print("{} : {}".format(item, quantity))
+
+inventory = Inventory()
+
+try:
+
+    inventory.add_item("Laptop", 10)
+
+    inventory.add_item("Mouse", 20)
+
+    inventory.remove_item("Laptop", 5)
+
+    inventory.display()
+
+except NegativeValueException as e:
+
+    print(e)
+
+except KeyError as e:
+
+    print(e)
