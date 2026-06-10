@@ -1,6 +1,6 @@
 # ============================================
 # FILE HANDLING PRACTICE - DAY 10
-# Date: 8 June 2026
+# Date: 09 June 2026
 # ============================================
 
 # QUESTION 1 - Easy
@@ -21,8 +21,22 @@
 # read_file("missing.txt")  → should catch error
 
 # YOUR CODE HERE:
+def write_file(filename , content):
+    with open(filename,"w") as file:
+        file.write(content)
+        print("FILE WRITTEN SUCCESSFULLY")
+    
+def read_file(filename):
+    try:
+        with open(filename,"r") as readfile:
+            readfile.read()
+    except FileNotFoundError():
+        print("FILE NOT FOUND:", filename)
 
 
+write_file("test.txt", "Hello Shikhar\nDay 10\nFile Handling")
+read_file("test.txt")
+# read_file("missing.txt")
 # ============================================
 
 # QUESTION 2 - Easy
@@ -39,7 +53,14 @@
 # Output should show all 3 lines
 
 # YOUR CODE HERE:
-
+def append_function(filename,content):
+    with open(filename,"a")as file_append:
+        file_append.write("\n" + content)
+        print("CONTENT APPENDED")
+write_file("log.txt","FIRST LINE")
+append_function("log.txt","SECOND LINE")
+append_function("log.txt","THIRD LINE")
+read_file("log.txt")
 
 # ============================================
 
@@ -61,7 +82,33 @@
 
 # YOUR CODE HERE:
 
+import csv
+def write_csv(filename,data ):
+    with open(filename,"w",newline="")as file:
+        
+        writer=csv.DictWriter(file,fieldnames=data[0].keys())
+        writer.writeheader()
+        writer.writerows(data)
+    print("CSV WRITTEN SUCCESSFULLY")
 
+def read_csv(filename):
+    try:
+        with open(filename,"r")as file:
+            reader=csv.DictReader(file)
+            for row in reader:
+                print(dict(row))
+    except FileNotFoundError:
+        print("FILE NOT FOUND:",filename)
+
+data = [
+    {"name": "Shikhar", "age": 20, "marks": 99},
+    {"name": "Rahul", "age": 21, "marks": 85}
+]
+
+
+write_csv("students.csv", data)
+
+read_csv("students.csv")
 # ============================================
 
 # QUESTION 4 - Medium
@@ -90,7 +137,14 @@
 # print(result)
 
 # YOUR CODE HERE:
+import json
+def write_json(filename , content):
+    with open(filename , "w") as file:
 
+def read_json(filename):
+    with open(filename,"r")as file:
+        reader=json.load(file)
+        print(data)
 
 # ============================================
 
