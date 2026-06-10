@@ -138,42 +138,39 @@ read_csv("students.csv")
 
 # YOUR CODE HERE:
 import json
-def write_json(filename , content):
-    with open(filename , "w") as file:
+def write_json(filename, data):
+    with open(filename, "w") as file:
+        json.dump(data, file, indent=4)
+    print("JSON written successfully")
 
 def read_json(filename):
-    with open(filename,"r")as file:
-        reader=json.load(file)
-        print(data)
+    try:
+        with open(filename, "r") as file:
+            data = json.load(file)
+            return data
+    except FileNotFoundError:
+        print("File not found:", filename)
+    except json.JSONDecodeError:
+        print("Invalid JSON format")
 
+data = {
+    "students": [
+        {
+            "name": "Shikhar",
+            "college": "PSIT",
+            "marks": 99
+        },
+        {
+            "name": "Rahul",
+            "college": "MAIT",
+            "marks": 85
+        }
+    ]
+}
+
+
+write_json("students.json", data)
+result = read_json("students.json")
+print(result)
 # ============================================
 
-# QUESTION 5 - Harder — DE Relevant
-# Build a simple logging system:
-#
-# Write a function log_event(filename, level, message) that:
-# - level can be "INFO", "WARNING", "ERROR"
-# - Appends to the log file in this format:
-#   "2026-06-08 | INFO | Pipeline started"
-# - Use datetime module for timestamp:
-#   from datetime import datetime
-#   timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-# - Catches any file errors
-#
-# Write a function read_logs(filename, level=None) that:
-# - Reads all logs if level is None
-# - Filters by level if provided
-# - Prints each matching line
-#
-# Test with:
-# log_event("pipeline.log", "INFO", "Pipeline started")
-# log_event("pipeline.log", "INFO", "Data loaded: 1000 rows")
-# log_event("pipeline.log", "WARNING", "Null values found: 5")
-# log_event("pipeline.log", "ERROR", "Database connection failed")
-# log_event("pipeline.log", "INFO", "Pipeline completed")
-#
-# read_logs("pipeline.log")           → all logs
-# read_logs("pipeline.log", "ERROR")  → only errors
-# read_logs("pipeline.log", "INFO")   → only info logs
-
-# YOUR CODE HERE:
