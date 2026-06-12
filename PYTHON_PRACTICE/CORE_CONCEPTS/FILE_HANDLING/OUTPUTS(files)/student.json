@@ -1,0 +1,19 @@
+{
+  "name": "Shikhar",
+  "college": "PSIT",
+  "semester": 5,
+  "subjects": [
+    "CPP",
+    "Python",
+    "DSA",
+    "SQL",
+    "data engineering"
+  ],
+  "scores": {
+    "CPP": 95,
+    "Python": 99,
+    "DSA": 92,
+    "SQL": 90,
+    "data engineering": 95
+  }
+}

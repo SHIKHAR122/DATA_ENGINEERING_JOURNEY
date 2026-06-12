@@ -1,0 +1,5 @@
+2026-06-12 10:14:44 | INFO | Pipeline started
+2026-06-12 10:14:44 | INFO | Data loaded: 1000 rows
+2026-06-12 10:14:44 | WARNING | Null values found: 5
+2026-06-12 10:14:44 | ERROR | Database connection failed
+2026-06-12 10:14:44 | INFO | Pipeline completed

@@ -174,3 +174,96 @@ result = read_json("students.json")
 print(result)
 # ============================================
 
+
+
+# QUESTION 5 - Harder — DE Relevant
+# Build a simple logging system:
+#
+# Write a function log_event(filename, level, message) that:
+# - level can be "INFO", "WARNING", "ERROR"
+# - Appends to the log file in this format:
+#   "2026-06-08 | INFO | Pipeline started"
+# - Use datetime module for timestamp:
+#   from datetime import datetime
+#   timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# - Catches any file errors
+#
+# Write a function read_logs(filename, level=None) that:
+# - Reads all logs if level is None
+# - Filters by level if provided
+# - Prints each matching line
+#
+# Test with:
+# log_event("pipeline.log", "INFO", "Pipeline started")
+# log_event("pipeline.log", "INFO", "Data loaded: 1000 rows")
+# log_event("pipeline.log", "WARNING", "Null values found: 5")
+# log_event("pipeline.log", "ERROR", "Database connection failed")
+# log_event("pipeline.log", "INFO", "Pipeline completed")
+#
+# read_logs("pipeline.log")           → all logs
+# read_logs("pipeline.log", "ERROR")  → only errors
+# read_logs("pipeline.log", "INFO")   → only info logs
+
+# YOUR CODE HERE:
+
+from datetime import datetime
+
+def log_event(filename , level , message ):
+    try:
+        timestamp= datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        with open (filename , "a") as file:
+            file.write(f"{timestamp} | {level} | {message}\n")
+    except OSError as e:
+        print("FILE ERROR ",e)
+
+
+def read_logs(filename , level=None):
+    try:
+        with open(filename,"r") as file:
+            for line in file:
+                if level is None:
+                    print(line.strip())
+                elif f"| {level} |" in line:
+                    print(line.strip())
+    except FileNotFoundError:
+        print("FILE NOT FOUND IN THE LOG ")
+
+log_event(
+    "pipeline.log",
+    "INFO",
+    "Pipeline started"
+)
+
+log_event(
+    "pipeline.log",
+    "INFO",
+    "Data loaded: 1000 rows"
+)
+
+log_event(
+    "pipeline.log",
+    "WARNING",
+    "Null values found: 5"
+)
+
+log_event(
+    "pipeline.log",
+    "ERROR",
+    "Database connection failed"
+)
+
+log_event(
+    "pipeline.log",
+    "INFO",
+    "Pipeline completed"
+)
+
+print("\nALL LOGS")
+read_logs("pipeline.log")
+
+print("\nERROR LOGS")
+read_logs("pipeline.log", "ERROR")
+
+print("\nINFO LOGS")
+read_logs("pipeline.log", "INFO")
