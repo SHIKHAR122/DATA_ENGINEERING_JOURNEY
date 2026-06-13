@@ -279,27 +279,56 @@ raw_data = [
 #   "Rejected rows: X"
 
 # YOUR CODE HERE:
-def remove_rows(filename):
-    clean_row=[]
-    rejected_row=[]
-    total_row=[]
-    with open(filename,"r")as file:
-        reader=csv.DictReader(file)
+import csv
+def clean_employee_data(filename):
+    clean_rows = []
+    rejected_rows = []
+    total_rows = 0
+    with open(filename, "r") as file:
+        reader = csv.DictReader(file)
         for row in reader:
-            total_row+=1
-            if row["name"].strip() is "":
-                row["reason"]="empty name"
-                rejected_row.append(row)
+            total_rows += 1
+            # Empty name
+            if row["name"].strip() == "":
+                row["reason"] = "empty name"
+                rejected_rows.append(row)
                 continue
-        try:
-            row["age"]=int(row["age"])
-        except ValueError:
-            row["reason"]="invalid age"
-            rejected_row.append(row)
-            
-        
-            
-# ============================================
+            # Invalid age
+            try:
+                row["age"] = int(row["age"])
+            except ValueError:
+                row["reason"] = "invalid age"
+                rejected_rows.append(row)
+                continue
+
+            # Invalid salary
+            try:
+                row["salary"] = int(row["salary"])
+            except ValueError:
+                row["reason"] = "invalid salary"
+                rejected_rows.append(row)
+                continue
+            # Negative salary
+            if row["salary"] < 0:
+                row["reason"] = "negative salary"
+                rejected_rows.append(row)
+                continue
+            clean_rows.append(row)
+    # Write clean rows
+    with open("clean_employees.csv", "w", newline="") as file:
+        writer = csv.DictWriter(file,fieldnames=["name", "age", "salary"])
+        writer.writeheader()
+        writer.writerows(clean_rows)
+    # Write rejected rows
+    with open("rejected.csv", "w", newline="") as file:
+
+        writer = csv.DictWriter(file,fieldnames=["name", "age", "salary", "reason"])
+        writer.writeheader()
+        writer.writerows(rejected_rows)
+    print(f"Total rows: {total_rows}")
+    print(f"Clean rows: {len(clean_rows)}")
+    print(f"Rejected rows: {len(rejected_rows)}")
+# ============================================)
 
 # QUESTION 11 - Real World — Student Report Generator
 # You have student data in a CSV called "class_data.csv"
@@ -323,8 +352,86 @@ def remove_rows(filename):
 # - Prints the top student and class average
 
 # YOUR CODE HERE:
+data=[
+    {"name":"shikhar","maths":90,"science":89,"english":88,"hindi":97},
+    {"name":"shivam","maths":70,"science":69,"english":22,"hindi":65},
+    {"name":"abhay","maths":80,"science":84,"english":53,"hindi":76},
+    {"name":"ashish","maths":40,"science":39,"english":43,"hindi":65},
+    {"name":"vaishnavi","maths":99,"science":87,"english":99,"hindi":75},
+    {"name":"ajay","maths":20,"science":39,"english":75,"hindi":54},
+    {"name":"amara","maths":60,"science":83,"english":38,"hindi":43},
+    {"name":"sanjay","maths":70,"science":65,"english":53,"hindi":54}
+]
 
+def student_report_generator(filename):
+    with open(filename,"w",newline="") as file:
+        writer=csv.DictWriter(file,fieldnames=["name","maths","science","english","hindi"])
+        writer.writeheader()
+        writer.writerows(data)
+    print("csv file created successfully")
 
+    students=[]
+    class_average_sum=0
+    highest_total=0
+    top_students=""
+
+    ##PIPELINE CREATION
+    with open(filename,"r") as file:
+        reader=csv.DictReader(file)
+
+        for row in reader:
+            total=(
+                int(row["maths"])+
+                int(row["science"])+
+                int(row["english"])+
+                int(row["hindi"])
+            )
+
+            average=round(total/4,2)
+
+            if average>=90:
+                grade="A"
+            elif average>=75:
+                grade="B"
+            elif average>=60:
+                grade="C"
+            elif average>=40:
+                grade="D"
+            else:
+                grade="F"
+
+            student={
+                "name":row["name"],
+                "total":total,
+                "average":average,
+                "grade":grade
+            }
+
+            students.append(student)
+            class_average_sum+=average
+
+            if total>highest_total:
+                highest_total=total
+                top_students=row["name"]
+
+    class_average=round(class_average_sum/len(students),2)
+
+    report={
+        "total_students":len(students),
+        "class_average":class_average,
+        "top_student":top_students,
+        "students":students
+    }
+
+    with open("report.json","w") as file:
+        json.dump(report,file,indent=4)
+    print("REPORT GENERATED SUCCESSFULLY")
+    print("TOP STUDENT:",top_students)
+    print("CLASS AVERAGE:",class_average)
+
+student_report_generator("class_data.csv")
+
+# student_report_generator("class_data")
 # ============================================
 
 # QUESTION 12 - Real World — Inventory Manager
@@ -354,7 +461,81 @@ def remove_rows(filename):
 # Test all methods thoroughly.
 
 # YOUR CODE HERE:
+import json
+class InventoryManager:
+    def __init__(self,filename):
+        self.filename=filename
 
+    def load(self):
+        try:
+            with open(self.filename,"r") as file:
+                data=json.load(file)
+                return data 
+        except FileNotFoundError:
+            return {}
+        
+    def save(self,data):
+        with open(self.filename, "w") as file:
+            json.dump(data,file,indent=4)
+    
+        
+    def add_item(self,name,quantity,price):
+        inventory=self.load()
+        if name in inventory:
+            inventory[name]["quantity"]+=quantity
+        else:
+            inventory[name]={
+                "quantity":quantity,
+                "price":price
+            }
+        self.save(inventory)
+        print("ITEM UPDATED")
+    
+    def remove_item(self,name,quantity):
+        inventory=self.load()
+        if name not in inventory:
+            raise KeyError("ITEM NOT FOUND")
+        
+        if quantity>inventory[name]["quantity"]:
+            raise ValueError ("NOT ENOUGH QUANTITY AVAILABLE")
+    
+        inventory[name]["quantity"]-=quantity
+        self.save(inventory)
+
+
+    def display(self):
+        inventory=self.load()
+        for name , details in inventory.items():
+            quantity=details["quantity"]
+            price=details["price"]
+            total=quantity*price
+        print("NAME : {}   QUANTITY : {}  PRICE : {}  TOTAL : {}".format(name,quantity,price,total))
+
+
+    def total_value(self):
+
+        inventory = self.load()
+
+        total = 0
+
+        for details in inventory.values():
+
+            total += (
+                details["quantity"]
+                * details["price"]
+            )
+
+        return total
+
+
+manager = InventoryManager("inventory.json")
+manager.add_item("Laptop", 10, 50000)
+manager.add_item("Mouse", 20, 500)
+manager.add_item("Laptop", 5, 50000)
+manager.display()
+print("TOTAL INVENTORY VALUE =", manager.total_value())
+manager.remove_item("Mouse", 5)
+manager.display()
 
 # ============================================
 
@@ -373,7 +554,89 @@ def remove_rows(filename):
 # - Prints the summary neatly
 
 # YOUR CODE HERE:
+data = [
+    {"date":"2026-01-05","product":"Laptop","category":"Electronics","quantity":2,"price":65000},
+    {"date":"2026-01-05","product":"Mouse","category":"Electronics","quantity":10,"price":500},
+    {"date":"2026-01-06","product":"Keyboard","category":"Electronics","quantity":5,"price":1200},
+    {"date":"2026-01-06","product":"T-Shirt","category":"Clothing","quantity":8,"price":799},
+    {"date":"2026-01-07","product":"Jeans","category":"Clothing","quantity":4,"price":1499},
+    {"date":"2026-01-07","product":"Notebook","category":"Stationery","quantity":20,"price":50},
+    {"date":"2026-01-08","product":"Pen","category":"Stationery","quantity":50,"price":10},
+    {"date":"2026-01-08","product":"Monitor","category":"Electronics","quantity":3,"price":15000},
+    {"date":"2026-01-09","product":"Shoes","category":"Footwear","quantity":6,"price":2499},
+    {"date":"2026-01-09","product":"Socks","category":"Footwear","quantity":15,"price":199}
+]
+def SalesDataAnalyzer(filename):
+    with open(filename, "w",newline="") as file:
+        writer=csv.DictWriter(file,fieldnames=["date","product","category","quantity","price"])
+        writer.writeheader()
+        writer.writerows(data)
+    total_revenue_category={}
+    total_revenue_product={}
+    product_quantity={}
+    with open(filename,"r") as file:
+        reader=csv.DictReader(filename)
+        for row in reader:
+            product=row["product"]
+            category=row["category"]
+            quantity = int(row["quantity"])
+            price = int(row["price"])
 
+            revenue=price*quantity
+
+            if product not in total_revenue_product:
+                total_revenue_product[product]=0
+            total_revenue_category[product]+=revenue
+
+            if category not in total_revenue_category:
+                total_revenue_category[category]=0
+            total_revenue_category[category]+=1
+
+            if quantity not in product_quantity:
+                product_quantity[product]=0
+            product_quantity[product]+=1
+
+    best_selling_product= max(
+        product_quantity,key=product_quantity.get()
+    )
+    
+    highest_revenue_product=max(
+        total_revenue_product,
+        key=total_revenue_product.get
+    )
+    summary={
+        "revenue per product": total_revenue_product,
+        "revenue per category": total_revenue_category,
+        "product quantity": product_quantity,
+        "best selling product": best_selling_product,
+        "highest revenue product ": highest_revenue_product
+    }
+
+    with open("sales_summary.json","w") as file:
+        json.load(summary,file,indent=4)
+        print("\nSALES SUMMARY")
+    print("-" * 40)
+
+    print("\nRevenue Per Product")
+
+    for product, revenue in total_revenue_product.items():
+
+        print(product, ":", revenue)
+
+    print("\nRevenue Per Category")
+
+    for category, revenue in total_revenue_category.items():
+
+        print(category, ":", revenue)
+
+    print("\nBest Selling Product :", best_selling_product)
+
+    print(
+        "Highest Revenue Product :",
+        highest_revenue_product
+    )
+
+SalesDataAnalyzer("sales_data.csv")
 
 # ============================================
 

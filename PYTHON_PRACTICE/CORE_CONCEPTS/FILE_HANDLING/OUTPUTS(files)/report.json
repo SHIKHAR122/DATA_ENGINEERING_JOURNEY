@@ -1,0 +1,55 @@
+{
+    "total_students": 8,
+    "class_average": 65.12,
+    "top_student": "shikhar",
+    "students": [
+        {
+            "name": "shikhar",
+            "total": 364,
+            "average": 91.0,
+            "grade": "A"
+        },
+        {
+            "name": "shivam",
+            "total": 226,
+            "average": 56.5,
+            "grade": "D"
+        },
+        {
+            "name": "abhay",
+            "total": 293,
+            "average": 73.25,
+            "grade": "C"
+        },
+        {
+            "name": "ashish",
+            "total": 187,
+            "average": 46.75,
+            "grade": "D"
+        },
+        {
+            "name": "vaishnavi",
+            "total": 360,
+            "average": 90.0,
+            "grade": "A"
+        },
+        {
+            "name": "ajay",
+            "total": 188,
+            "average": 47.0,
+            "grade": "D"
+        },
+        {
+            "name": "amara",
+            "total": 224,
+            "average": 56.0,
+            "grade": "D"
+        },
+        {
+            "name": "sanjay",
+            "total": 242,
+            "average": 60.5,
+            "grade": "C"
+        }
+    ]
+}
