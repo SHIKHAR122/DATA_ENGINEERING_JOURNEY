@@ -1,0 +1,21 @@
+2026-06-14 11:38:45 | INFO | Pipeline started
+2026-06-14 11:38:45 | INFO | Connecting to database
+2026-06-14 11:38:45 | INFO | Connection successful
+2026-06-14 11:38:45 | WARNING | Slow query detected
+2026-06-14 11:38:45 | INFO | Data extraction started
+2026-06-14 11:38:45 | ERROR | Timeout on table users
+2026-06-14 11:38:45 | INFO | Retrying extraction
+2026-06-14 11:38:45 | WARNING | Null values found: 12
+2026-06-14 11:38:45 | ERROR | Database connection lost
+2026-06-14 11:38:45 | INFO | Pipeline failed — exiting
+2026-06-14 11:38:45 | INFO | Extraction Started
+2026-06-14 11:38:45 | INFO | Extracted 10 rows
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | WARNING | Rejected Transaction
+2026-06-14 11:38:45 | INFO | Loaded 4 clean rows
+2026-06-14 11:38:45 | INFO | Loaded 6 rejected rows
+2026-06-14 11:38:45 | INFO | PIPELINE COMPLETED

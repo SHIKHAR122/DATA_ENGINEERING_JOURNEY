@@ -34,10 +34,12 @@ write_csv("employee.csv")
 
 # YOUR CODE HERE:
 def read_csv(filename):
+    employee_count=0
     with open(filename,"r") as file:
         content=csv.reader(file)
         header=next(content)
         for row in content:
+            employee_count+=1
             print(row)
         print("read successfully")
 
@@ -154,12 +156,12 @@ import json
 updated_subject=[]
 def update_json(filename):
     with open(filename,"r") as file:
-        json.load(file)
+        data=json.load(file)
     data["subjects"].append("data engineering")        
     data["scores"]["data engineering"]=95
     with open(filename, "w") as file:
         json.dump(data,file,indent=2)
-print("JSON FILE UPDATED")
+    print("JSON FILE UPDATED")
 
 update_json("student.json")
 
@@ -179,13 +181,14 @@ update_json("student.json")
 # YOUR CODE HERE:
 def safe_read_csv(filename):
     
-    with open(filename,"r") as file:
+    
         try:
-            reader=csv.DictReader(file)
-            res=[]
-            for row in reader:
-                res.append(dict(row))
-            return res
+            with open(filename,"r") as file:
+                reader=csv.DictReader(file)
+                res=[]
+                for row in reader:
+                    res.append(dict(row))
+                return res
         except FileNotFoundError:
             print("FILE NOT FOUND")
         except csv.Error:
@@ -509,22 +512,14 @@ class InventoryManager:
             quantity=details["quantity"]
             price=details["price"]
             total=quantity*price
-        print("NAME : {}   QUANTITY : {}  PRICE : {}  TOTAL : {}".format(name,quantity,price,total))
+            print("NAME : {}   QUANTITY : {}  PRICE : {}  TOTAL : {}".format(name,quantity,price,total))
 
 
     def total_value(self):
-
         inventory = self.load()
-
         total = 0
-
         for details in inventory.values():
-
-            total += (
-                details["quantity"]
-                * details["price"]
-            )
-
+            total += (details["quantity"]* details["price"])
         return total
 
 
@@ -575,7 +570,7 @@ def SalesDataAnalyzer(filename):
     total_revenue_product={}
     product_quantity={}
     with open(filename,"r") as file:
-        reader=csv.DictReader(filename)
+        reader=csv.DictReader(file)
         for row in reader:
             product=row["product"]
             category=row["category"]
@@ -586,7 +581,7 @@ def SalesDataAnalyzer(filename):
 
             if product not in total_revenue_product:
                 total_revenue_product[product]=0
-            total_revenue_category[product]+=revenue
+            total_revenue_product[product]+=revenue
 
             if category not in total_revenue_category:
                 total_revenue_category[category]=0
@@ -596,14 +591,9 @@ def SalesDataAnalyzer(filename):
                 product_quantity[product]=0
             product_quantity[product]+=1
 
-    best_selling_product= max(
-        product_quantity,key=product_quantity.get()
-    )
+    best_selling_product= max(product_quantity,key=product_quantity.get)
+    highest_revenue_product=max(total_revenue_product,key=total_revenue_product.get)
     
-    highest_revenue_product=max(
-        total_revenue_product,
-        key=total_revenue_product.get
-    )
     summary={
         "revenue per product": total_revenue_product,
         "revenue per category": total_revenue_category,
@@ -613,7 +603,7 @@ def SalesDataAnalyzer(filename):
     }
 
     with open("sales_summary.json","w") as file:
-        json.load(summary,file,indent=4)
+        json.dump(summary,file,indent=4)
         print("\nSALES SUMMARY")
     print("-" * 40)
 
@@ -638,11 +628,18 @@ def SalesDataAnalyzer(filename):
 
 SalesDataAnalyzer("sales_data.csv")
 
+
+
+
+
+
+# ============================================
+# QUESTION 14 - Real World — Log Analyzer
+# Date: 10 June 2026
 # ============================================
 
-# QUESTION 14 - Real World — Log Analyzer
 # Build on top of your log_event and read_logs
-# functions from yesterday.
+# functions from the previous file handling set.
 #
 # Add a function analyze_logs(filename) that:
 # - Reads the log file
@@ -666,43 +663,275 @@ SalesDataAnalyzer("sales_data.csv")
 
 # YOUR CODE HERE:
 
+from datetime import datetime
+import json
+def log_event(filename, level, message):
+    try:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open(filename, "a") as file:
+            file.write(f"{timestamp} | {level} | {message}\n")
+    except OSError as e:
+        print("FILE ERROR", e)
+
+def analyze_logs(filename):
+    total = 0
+    counts = {"INFO": 0, "WARNING": 0, "ERROR": 0}
+    first_error = None
+    last_error = None
+
+    with open(filename, "r") as file:
+        for line in file:
+            total += 1
+        if "INFO" in line:
+            counts["INFO"] += 1
+        elif "WARNING" in line:
+            counts["WARNING"] += 1
+        elif "ERROR" in line:
+            counts["ERROR"] += 1
+            if first_error is None:
+                first_error = line.strip()
+            last_error = line.strip()
+    summary = {
+        "total": total,
+        "INFO": counts["INFO"],
+        "WARNING": counts["WARNING"],
+        "ERROR": counts["ERROR"],
+        "first_error": first_error,
+        "last_error": last_error
+    }
+
+    with open("log_summary.json", "w") as file:
+        json.dump(summary, file, indent=4)  # which json function?
+
+    return summary
+    
+    
+
+
+# Generate 10 log events first
+log_event("pipeline.log", "INFO", "Pipeline started")
+log_event("pipeline.log", "INFO", "Connecting to database")
+log_event("pipeline.log", "INFO", "Connection successful")
+log_event("pipeline.log", "WARNING", "Slow query detected")
+log_event("pipeline.log", "INFO", "Data extraction started")
+log_event("pipeline.log", "ERROR", "Timeout on table users")
+log_event("pipeline.log", "INFO", "Retrying extraction")
+log_event("pipeline.log", "WARNING", "Null values found: 12")
+log_event("pipeline.log", "ERROR", "Database connection lost")
+log_event("pipeline.log", "INFO", "Pipeline failed — exiting")
+
+# Then analyze
+summary = analyze_logs("pipeline.log")
+print(summary)
+
 
 # ============================================
-
 # QUESTION 15 - HARDEST — ETL Mini Pipeline
+# Date: 10 June 2026
+# ============================================
+
 # Build a complete mini ETL pipeline using only
 # file handling — no Pandas yet.
 #
-# You have raw sales data — create "raw_sales.csv":
+# STEP 1 — Create raw_sales.csv with this data:
 # fields: transaction_id, customer_name, product,
 #         quantity, unit_price, date
-# Add 10+ rows including some dirty data:
-# - Some rows with missing customer_name
-# - Some rows with invalid quantity (negative or text)
-# - Some rows with invalid unit_price (negative or text)
+# Include dirty rows:
+# - Some with missing customer_name
+# - Some with invalid quantity (negative or text)
+# - Some with invalid unit_price (negative or text)
 #
-# EXTRACT:
+# STEP 2 — EXTRACT:
 # - Read raw_sales.csv
 # - Log "Extraction started" to pipeline.log
-# - Log total rows extracted
+# - Log "Extracted X rows" to pipeline.log
 #
-# TRANSFORM:
+# STEP 3 — TRANSFORM:
 # - Remove rows with missing customer_name
-# - Convert quantity and unit_price to numbers
-# - Skip invalid rows and log them as WARNING
+#   log each rejection as WARNING
+# - Convert quantity to int — skip if invalid
+#   log each rejection as WARNING
+# - Convert unit_price to int — skip if invalid
+#   log each rejection as WARNING
+# - Skip rows where quantity or unit_price is negative
+#   log each rejection as WARNING
 # - Calculate total_price = quantity * unit_price
-# - Add a processed_at timestamp column
+# - Add processed_at timestamp column
 #
-# LOAD:
-# - Write clean data to "processed_sales.csv"
+# STEP 4 — LOAD:
+# - Write clean rows to "processed_sales.csv"
 # - Write rejected rows to "rejected_sales.csv"
+#   include a "reason" column
+# - Log "Loaded X clean rows" to pipeline.log
+# - Log "Rejected X rows" to pipeline.log
 #
-# SUMMARY:
-# - Write pipeline summary to "pipeline_summary.json":
-#   total extracted, total loaded, total rejected,
-#   pipeline start time, pipeline end time,
-#   total revenue from clean data
+# STEP 5 — SUMMARY:
+# - Calculate total revenue from clean data
+# - Write to "pipeline_summary.json":
+#   {
+#     "pipeline_start": "timestamp",
+#     "pipeline_end": "timestamp",
+#     "total_extracted": X,
+#     "total_loaded": X,
+#     "total_rejected": X,
+#     "total_revenue": X
+#   }
 # - Log "Pipeline completed" to pipeline.log
 # - Print the summary
 
-# YOUR CODE HERE:
+# RAW DATA TO USE:
+raw_sales = [
+    {"transaction_id": 1, "customer_name": "Shikhar",
+     "product": "Laptop", "quantity": "2",
+     "unit_price": "65000", "date": "2026-06-01"},
+    {"transaction_id": 2, "customer_name": "",
+     "product": "Mouse", "quantity": "5",
+     "unit_price": "500", "date": "2026-06-01"},
+    {"transaction_id": 3, "customer_name": "Rahul",
+     "product": "Keyboard", "quantity": "abc",
+     "unit_price": "1200", "date": "2026-06-02"},
+    {"transaction_id": 4, "customer_name": "Aditya",
+     "product": "Monitor", "quantity": "3",
+     "unit_price": "-5000", "date": "2026-06-02"},
+    {"transaction_id": 5, "customer_name": "Priya",
+     "product": "Headphones", "quantity": "4",
+     "unit_price": "3000", "date": "2026-06-03"},
+    {"transaction_id": 6, "customer_name": "Karan",
+     "product": "Webcam", "quantity": "-2",
+     "unit_price": "2000", "date": "2026-06-03"},
+    {"transaction_id": 7, "customer_name": "Sneha",
+     "product": "USB Hub", "quantity": "10",
+     "unit_price": "800", "date": "2026-06-04"},
+    {"transaction_id": 8, "customer_name": "",
+     "product": "Mousepad", "quantity": "6",
+     "unit_price": "300", "date": "2026-06-04"},
+    {"transaction_id": 9, "customer_name": "Vikram",
+     "product": "Chair", "quantity": "1",
+     "unit_price": "xyz", "date": "2026-06-05"},
+    {"transaction_id": 10, "customer_name": "Meera",
+     "product": "Desk", "quantity": "1",
+     "unit_price": "15000", "date": "2026-06-05"},
+]
+
+def log_events(filename,level,message):
+    timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(filename,"a") as log_event:
+        log_event.write("{} | {} | {}\n".format(timestamp,level,message))
+
+
+def create_csv(filename):
+    try:
+        with open(filename,"w",newline="") as file:
+            writer=csv.DictWriter(file,fieldnames=["transaction_id","customer_name","product","quantity","unit_price","date"])
+            writer.writeheader()
+            writer.writerows(raw_sales)
+    except OSError as e:
+        print("FILE ERROR",e)
+
+
+def extract(filename):
+    log_events("pipeline.log","INFO","Extraction Started")
+
+    with open(filename,"r") as file:
+        reader=csv.DictReader(file)
+        rows=list(reader)
+
+    log_events("pipeline.log","INFO","Extracted {} rows".format(len(rows)))
+    return rows
+
+
+def transform(filename):
+    clean_rows=[]
+    rejected_row=[]
+    with open(filename,"r") as file:
+        reader=csv.DictReader(file)
+        for row in reader:
+            if row["customer_name"]=="":
+                row["reason"]="empty customer name"
+                rejected_row.append(row)
+                log_events("pipeline.log","WARNING","Rejected Transaction")
+                continue
+
+            try:
+                quantity=int(row["quantity"])
+            except ValueError:
+                row["reason"]="invalid quantity"
+                rejected_row.append(row)
+                log_events("pipeline.log","WARNING","Rejected Transaction")
+                continue
+
+            try:
+                unit=int(row["unit_price"])
+            except ValueError:
+                row["reason"]="invalid unit price"
+                rejected_row.append(row)
+                log_events("pipeline.log","WARNING","Rejected Transaction")
+                continue
+
+            if unit<0:
+                row["reason"]="negative unit price"
+                rejected_row.append(row)
+                log_events("pipeline.log","WARNING","Rejected Transaction")
+                continue
+
+            if quantity<0:
+                row["reason"]="negative quantity"
+                rejected_row.append(row)
+                log_events("pipeline.log","WARNING","Rejected Transaction")
+                continue
+
+            row["quantity"]=quantity
+            row["unit_price"]=unit
+            row["total_price"]=quantity*unit
+            row["processed_at"]=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            clean_rows.append(row)
+    return clean_rows,rejected_row
+
+
+def load(clean_rows,rejected_row):
+    with open("processed_sales.csv","w",newline="") as clean_file:
+        writer=csv.DictWriter(clean_file,fieldnames=["transaction_id","customer_name","product","quantity","unit_price","date","total_price","processed_at"])
+        writer.writeheader()
+        writer.writerows(clean_rows)
+    with open("rejected_sales.csv","w",newline="") as rejected_file:
+        writer=csv.DictWriter(rejected_file,fieldnames=["transaction_id","customer_name","product","quantity","unit_price","date","reason"])
+        writer.writeheader()
+        writer.writerows(rejected_row)
+    log_events("pipeline.log","INFO","Loaded {} clean rows".format(len(clean_rows)))
+    log_events("pipeline.log","INFO","Loaded {} rejected rows".format(len(rejected_row)))
+    print("LOAD COMPLETED")
+
+
+def summary(start_time,rows,clean_rows,rejected_row):
+    total_revenue=0
+    for row in clean_rows:
+        total_revenue+=row["total_price"]
+    end_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    report={
+        "pipeline_start":start_time,
+        "pipeline_end":end_time,
+        "total_extracted":len(rows),
+        "total_loaded":len(clean_rows),
+        "total_rejected":len(rejected_row),
+        "total_revenue":total_revenue
+    }
+    with open("pipeline_summary.json","w") as file:
+        json.dump(report,file,indent=4)
+    log_events("pipeline.log","INFO","PIPELINE COMPLETED")
+    print("\nPIPELINE SUMMARY\n")
+    print("TOTAL EXTRACTED:",report["total_extracted"])
+    print("TOTAL LOADED:",report["total_loaded"])
+    print("TOTAL REJECTED:",report["total_rejected"])
+    print("TOTAL REVENUE GENERATED:",report["total_revenue"])
+    return report
+
+
+
+
+start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+create_csv("raw_sales.csv")
+rows = extract("raw_sales.csv")
+clean_rows, rejected_row = transform("raw_sales.csv")
+load(clean_rows, rejected_row)
+summary(start_time, rows, clean_rows, rejected_row)

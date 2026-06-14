@@ -1,0 +1,11 @@
+transaction_id,customer_name,product,quantity,unit_price,date
+1,Shikhar,Laptop,2,65000,2026-06-01
+2,,Mouse,5,500,2026-06-01
+3,Rahul,Keyboard,abc,1200,2026-06-02
+4,Aditya,Monitor,3,-5000,2026-06-02
+5,Priya,Headphones,4,3000,2026-06-03
+6,Karan,Webcam,-2,2000,2026-06-03
+7,Sneha,USB Hub,10,800,2026-06-04
+8,,Mousepad,6,300,2026-06-04
+9,Vikram,Chair,1,xyz,2026-06-05
+10,Meera,Desk,1,15000,2026-06-05
