@@ -311,3 +311,91 @@ calculate_area(-5, 10)
 calculate_volume(2, 3, 4)
 
 calculate_volume(2, -3, 4)
+
+
+# BLANK FILE TEST — OOP
+# Time limit: 20 minutes
+# Rules: No notes, no reference, no Google
+
+# Build the following from scratch:
+
+# 1. A BankAccount class with:
+#    - owner name and balance as attributes
+#    - deposit() method with validation (no negative deposits)
+#    - withdraw() method with validation (no negative balance)
+#    - __str__ that prints account details cleanly
+
+# 2. A SavingsAccount that:
+#    - inherits from BankAccount
+#    - adds an interest_rate attribute
+#    - has an apply_interest() method that adds interest to balance
+#    - overrides __str__ to include interest rate
+
+# 3. A classmethod on BankAccount that:
+#    - creates an account from a dictionary
+#    - dict format: {"owner": "Shikhar", "balance": 5000}
+
+# YOUR CODE STARTS BELOW THIS LINE
+
+class BankAccount:
+    def __init__(self,name,balance,**kwargs):
+        super().__init__(**kwargs)
+        self.name=name
+        self.balance=balance
+    def deposit(self,amount):
+        try:
+            self.balance+=amount
+            print("{} AMOUNT ADDED TO THE BANK ACCOUNT".format(amount))
+        except ValueError as e:
+            print("NEGATIVE VALUE",e)
+
+    def withdraw(self,amount):
+        if amount<0 or amount>self.balance:
+            raise ValueError("INSUFFICIENT BALANCE")
+        else : self.balance-=amount
+        print("{} AMOUNT WITHDRAWED FROM ACCOUNT".format(amount))
+    def __str__(self):
+        return ("OWNER {}  HAS BALANCE {}".format(self.name,self.balance))
+    @classmethod
+    def from_dict(cls,data):
+        return cls(data["owner"],data["balance"])
+
+class SavingAccount(BankAccount):
+    def __init__(self,rate_interest,**kwargs):
+        super().__init__(**kwargs)
+        self.rate_interest=rate_interest
+
+    def apply_interest(self):
+        interest=self.balance*(self.rate_interest/100)
+        self.balance+=interest
+    def __str__(self):
+        return("OWNER : {}  BALANCE {}  ROI {}  ".format(self.name,self.balance,self.rate_interest))
+
+# BankAccount
+acc1 = BankAccount("Shikhar", 5000)
+
+acc1.deposit(1000)
+acc1.withdraw(2000)
+
+print(acc1)
+
+# SavingsAccount
+savings = SavingAccount()
+
+print("\nBefore Interest:")
+print(savings)
+
+savings.apply_interest()
+
+print("\nAfter Interest:")
+print(savings)
+
+# Classmethod Test
+data = {
+    "owner": "Aman",
+    "balance": 7500
+}
+acc2 = BankAccount.from_dict(data)
+
+print("\nCreated using classmethod:")
+print(acc2)
