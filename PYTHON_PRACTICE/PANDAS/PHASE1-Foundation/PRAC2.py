@@ -70,25 +70,25 @@ print(df)
 
 # YOUR CODE HERE:
 
-# numeric_df = df.select_dtypes(include='number')
-# print("\nTHE NUMERIC DATA FRAMES ARE : \n",numeric_df)
+numeric_df = df.select_dtypes(include='number')
+print("\nTHE NUMERIC DATA FRAMES ARE : \n",numeric_df)
 
-# string_df  = df.select_dtypes(include='object')
-# print("\nTHE STRING DATA FRAMES ARE : \n",string_df)
+string_df  = df.select_dtypes(include='object')
+print("\nTHE STRING DATA FRAMES ARE : \n",string_df)
 
-# numeric_sum=numeric_df.sum()
-# print("THE SUM OF THE NUMERIC DATA FRAMES ARE : \n" , numeric_sum)
+numeric_sum=numeric_df.sum()
+print("THE SUM OF THE NUMERIC DATA FRAMES ARE : \n" , numeric_sum)
 
-# mean = numeric_df.mean()
-# print("\nTHE MEAN OF THE NUMERIC COLUMNS IS:\n", mean)
-# def count_column_types(df):
-#     count_numbers = len(df.select_dtypes(include='number').columns)
-#     count_objects = len(df.select_dtypes(include='object').columns)
-#     return {
-#         "numeric": count_numbers,
-#         "object": count_objects
-#     }
-# print(count_column_types(df))
+mean = numeric_df.mean()
+print("\nTHE MEAN OF THE NUMERIC COLUMNS IS:\n", mean)
+def count_column_types(df):
+    count_numbers = len(df.select_dtypes(include='number').columns)
+    count_objects = len(df.select_dtypes(include='object').columns)
+    return {
+        "numeric": count_numbers,
+        "object": count_objects
+    }
+print(count_column_types(df))
 
 
 # ============================================

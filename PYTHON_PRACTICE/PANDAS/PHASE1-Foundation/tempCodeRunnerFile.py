@@ -1,0 +1,6 @@
+print("THE FIRST THREE ITEMS IN THE INVENTORY ARE:\n",df.head(3))
+# print("THE LAST 2 ITEMS IN THE INVENTORY ARE : ", df.tail(2))
+# print("THE NUMBER OF ROWS AND COLUMNS IN THE INVENTORY ARE : ", df.shape)
+# print("THE DATA ITEMS OF EACH COLUMNS ARE : \n",df.dtypes)
+# print("\n THE ITEM NAMES ARE: \n",df["item_name"])
+# print("\n THE PRICES OF THE ITEMS ARE: \n", df["price"])
