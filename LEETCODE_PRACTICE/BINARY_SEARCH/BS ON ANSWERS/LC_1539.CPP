@@ -36,3 +36,35 @@ public:
 
     }
 };
+
+
+
+
+
+// SECOND APPROACH -
+
+// IN THIS APPROACH WE WILL BE USING THE UNORDERED SET - TO STORE THE FREQUENCY OF THE ELEMENTS IN THE ARRAY 
+// AND THEN COUNT THE MISSING ELEMENTS AND WORK ACCORDING TO THE LOGIC 
+
+// THE COMPLEXITY OF THIS APPROACH IS O(n) , BUT STILL THIS IS ALSO NOT THE MOST OPTIMAL APPROACH 
+
+
+
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        int maxi = *max_element(arr.begin(), arr.end());
+        unordered_set<int> st(arr.begin(), arr.end());
+        int count = 0;
+        for(int i = 1; i <= maxi + k; i++)
+        {
+            if(st.find(i) == st.end())
+            {
+                count++;
+                if(count == k)
+                    return i;
+            }
+        }
+        return -1;
+    }
+};

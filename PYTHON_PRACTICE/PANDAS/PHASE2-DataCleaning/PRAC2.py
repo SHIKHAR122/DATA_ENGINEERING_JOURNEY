@@ -6,10 +6,6 @@ import numpy as np
 # QUESTION B1 — Asked in DA Internship Interviews
 # "Here's a customer dataset. Clean it and tell me how
 #  many genuinely usable records remain."
-class CustomerDataCleaner:
-    def __init__(self, data):
-        self.df = pd.DataFrame(data)
-
     # Build this class yourself:
     # - Method clean() that:
     #     removes rows with null customer_name
@@ -35,7 +31,24 @@ raw_customers = {
 # — should raise ValueError.
 
 # YOUR CODE HERE:
+df=pd.DataFrame(raw_customers)
+class CustomerDataCleaner:
+    def __init__(self, data):
+        self.df = pd.DataFrame(data)
 
+    def clean(self):
+        self.df.dropna(inplace=True)
+        self.df.drop_duplicates(inplace=True)
+        self.df = self.df[self.df["customer_name"].str.strip() != ""]
+        self.df["customer_name"]=self.df["customer_name"].str.strip()
+        self.df["email"]=self.df["email"].str.lower()
+        return self.df
+              
+    def usable_count(self):
+        return len(self.df)
+cd=CustomerDataCleaner(df)
+print(cd.clean())
+print("THE COUNT OF THE CLEAN ROWS ARE :",cd.usable_count())
 
 # ============================================
 
@@ -65,7 +78,6 @@ sales_raw = {
 # - Print which product generated the most revenue
 
 # YOUR CODE HERE:
-
 
 # ============================================
 
