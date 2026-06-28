@@ -1,168 +1,194 @@
 # ============================================
-# SECTION B — Real Interview Style Problems (5 Questions)
+# PANDAS — PHASE 1 + 2 INTERVIEW STYLE
+# Date: 28 June 2026
 # ============================================
-import pandas as pd 
-import numpy as np
-# QUESTION B1 — Asked in DA Internship Interviews
-# "Here's a customer dataset. Clean it and tell me how
-#  many genuinely usable records remain."
-    # Build this class yourself:
-    # - Method clean() that:
-    #     removes rows with null customer_name
-    #     removes exact duplicate rows
-    #     strips whitespace from customer_name and email
-    #     standardizes email to lowercase
-    #     returns the cleaned df
-    # - Method usable_count() that:
-    #     returns count of rows after clean() has run
-    #     raises ValueError if clean() hasn't been called yet
-    #     (hint: track this with a flag attribute)
 
-raw_customers = {
-    "customer_name": ["Shikhar", "  Rahul", None, "Priya  ",
-                      "Shikhar", "Aditya", "  ", "Sneha"],
-    "email": ["Shikhar@Gmail.com", "rahul@yahoo.com", "x@x.com",
-             "PRIYA@gmail.com", "Shikhar@Gmail.com",
-             "aditya@outlook.com", "y@y.com", "sneha@gmail.com"]
+import pandas as pd
+import numpy as np
+
+# ------------------------------------------------
+# QUESTION 1
+# A college sends you a CSV-style admissions dataset
+# (already loaded as a dict below). Several students have
+# applied more than once due to a form glitch, and a few
+# entries are missing their score. The admissions head
+# wants one clean record per student and no missing scores
+# left unresolved.
+
+admissions = {
+    "applicant_id": [1, 2, 3, 2, 4, 5, 3, 6],
+    "name": ["Shikhar", "Rahul", "Priya", "Rahul",
+            "Aditya", "Sneha", "Priya", "Karan"],
+    "score": [88, np.nan, 76, 91, 65, np.nan, 76, 82]
 }
 
-# Create CustomerDataCleaner, call clean(), call usable_count().
-# Try calling usable_count() on a NEW object before clean()
-# — should raise ValueError.
+# Build a class AdmissionsCleaner that takes this data,
+# produces one clean record per applicant_id, and fills
+# any remaining missing scores with the overall average
+# score. Add a method that reports how many duplicate
+# applications were found and removed.
 
-# YOUR CODE HERE:
-df=pd.DataFrame(raw_customers)
-class CustomerDataCleaner:
-    def __init__(self, data):
-        self.df = pd.DataFrame(data)
+
+df=pd.DataFrame(admissions)
+class AdmissionCleaner:
+    def __init__(self,df):
+        self.df=df
+        self.duplicated_rows=0
+    def cleaner(self):
+        self.duplicated_rows=self.df.duplicated(subset="applicant_id").sum()
+        self.df = self.df.sort_values(by="score",na_position="last")
+        self.df=self.df.drop_duplicates(subset="applicant_id",keep="first")
+        overall_avg = self.df["score"].mean()
+        self.df["score"] = self.df["score"].fillna(overall_avg)
+        return self.df
+    
+
+    def summary_data(self):
+        return self.duplicated_rows
+
+ac=AdmissionCleaner(df)
+print(ac.cleaner())
+print("THE TOTAL NUMBER OF ROWS REMOVED ARE :", ac.summary_data())
+# ------------------------------------------------
+# QUESTION 2
+# An HR system exports employee names inconsistently —
+# some have extra spaces, some are in different cases,
+# and the department field has typos in casing too.
+# You're asked to standardize this before it gets loaded
+# into the company directory tool.
+
+employees = {
+    "emp_name": ["  shikhar sharma", "RAHUL VERMA  ",
+                "Priya Singh", "  aditya kumar"],
+    "dept": ["data", "DATA", "Engineering", "engineering "],
+    "Emp Salary": ["72000", "55000", "88000", "61000"]
+}
+
+# Clean this dataset so names are properly capitalized
+# with no extra whitespace, departments are consistent,
+# the salary column has a sensible name and is usable
+# for numeric calculations, not stored as text.
+df2=pd.DataFrame(employees)
+class CompanyTool:
+    def __init__(self, df2):
+        self.df2 = df2
 
     def clean(self):
-        self.df.dropna(inplace=True)
-        self.df.drop_duplicates(inplace=True)
-        self.df = self.df[self.df["customer_name"].str.strip() != ""]
-        self.df["customer_name"]=self.df["customer_name"].str.strip()
-        self.df["email"]=self.df["email"].str.lower()
-        return self.df
-              
-    def usable_count(self):
-        return len(self.df)
-cd=CustomerDataCleaner(df)
-print(cd.clean())
-print("THE COUNT OF THE CLEAN ROWS ARE :",cd.usable_count())
+        self.df2["emp_name"] = self.df2["emp_name"].str.upper().str.strip()
+        self.df2["dept"]=self.df2["dept"].str.upper().str.strip()
+        self.df2 = self.df2.rename(columns={"Emp Salary": "salary"})
+        self.df2["salary"] = self.df2["salary"].astype(int)
+        return self.df2
 
-# ============================================
 
-# QUESTION B2 — Asked in DA Internship Interviews
-# "We suspect our sales data has inconsistent product names
-#  due to manual entry. Standardize them and recalculate
-#  total revenue per actual product."
-sales_raw = {
-    "product": ["laptop", "Laptop", "LAPTOP ", " laptop",
-               "mouse", "Mouse", "keyboard", "Keyboard "],
-    "quantity": [2, 1, 3, 1, 10, 5, 8, 4],
-    "price": [65000, 65000, 65000, 65000,
-             500, 500, 1200, 1200]
+ct = CompanyTool(df2)
+print(ct.clean())
+
+# ------------------------------------------------
+# QUESTION 3
+# A support ticketing system logs customer emails with
+# wildly inconsistent casing, which is creating duplicate
+# customer profiles. You're asked to find out exactly how
+# many "customers" in this list are actually the same
+# person re-logged under different email casing.
+
+tickets = {
+    "ticket_id": [101, 102, 103, 104, 105, 106],
+    "customer_email": ["amit@gmail.com", "NEHA@yahoo.com",
+                       "AMIT@GMAIL.com", "raj@outlook.com",
+                       "neha@YAHOO.com", "raj@OUTLOOK.com"]
 }
 
-# Using string operations (.str.strip(), .str.lower(),
-# .str.title()) to standardize "product" names BEFORE
-# grouping — then use groupby (you've used this conceptually
-# before via aggregation, now apply it formally):
-#
-# df.groupby("product")["quantity"].sum() type pattern
-#
-# - Standardize product names so "laptop", "Laptop ",
-#   " laptop" all become one consistent value
-# - Calculate revenue column (price * quantity)
-# - Calculate total revenue PER cleaned product name
-# - Print which product generated the most revenue
+# Identify the true number of unique customers in this
+# dataset and produce a clean version of the table with
+# one row per actual customer.
+df3=pd.DataFrame(tickets)
+class ticketingsystem:
+    def __init__(self, df3):
+        self.df3=df3
+    def transform(self):
+        self.df3["customer_email"]=self.df3["customer_email"].str.lower().str.strip()
+        self.df3.drop_duplicates(subset="customer_email", inplace=True)
+        return self.df3
+    def relogged(self):
+        return self.df3["customer_email"].nunique()
+ts = ticketingsystem(df3)
 
-# YOUR CODE HERE:
+print(ts.transform())
+print("Unique customers:", ts.relogged())
+# ------------------------------------------------
+# QUESTION 4
+# A retail chain shares product feedback data collected
+# from multiple store branches. The "rating" field has
+# some missing entries, and the reviewer names have
+# inconsistent formatting. Management wants a usable
+# version of this data along with a short report of what
+# was wrong with it originally.
 
-# ============================================
-
-# QUESTION B3 — Asked in DA Internship Interviews
-# "This employee dataset has missing salary values for
-#  some departments. Don't just drop them — fill them
-#  intelligently."
-employees_raw = {
-    "name": ["Shikhar", "Rahul", "Priya", "Aditya",
-            "Sneha", "Karan", "Meera"],
-    "department": ["Data", "IT", "Data", "IT",
-                   "Data", "HR", "HR"],
-    "salary": [90000, np.nan, 95000, 60000,
-              np.nan, 45000, np.nan]
+reviews = {
+    "reviewer": ["Shikhar", "  rahul", None, "PRIYA",
+                "aditya  ", " ", "Sneha"],
+    "rating": [4, np.nan, 5, np.nan, 3, 2, np.nan],
+    "store": ["Kanpur", "kanpur", "Lucknow", "LUCKNOW",
+             "Kanpur", "lucknow ", "Lucknow"]
 }
 
-# - Fill missing salary with the AVERAGE salary of that
-#   employee's OWN department, not the overall average
-#   hint: groupby("department")["salary"].transform("mean")
-#   this is a real technique used constantly in DE/DA work
-# - Print the DataFrame before and after filling
-# - Explain in a comment why this is better than filling
-#   with the overall mean salary
+# Build something that cleans this dataset properly,
+# decides what to do with missing reviewers and missing
+# ratings, standardizes the store names, and then tells
+# you how many rows were unusable and had to be removed
+# versus how many were fixable.
+df4=pd.DataFrame(reviews)
+class retail:
+    def __init__(self,df4):
+        self.df4=df4
+        self.fixed=0
+        self.removed=0
+    def convert(self):
+        self.df4["reviewer"]=self.df4["reviewer"].str.strip().str.upper()
+        self.df4["store"]=self.df4["store"].str.strip().str.upper()
+        self.fixed += self.df4["reviewer"].isna().sum()
+        self.df4["reviewer"]=self.df4["reviewer"].replace({None:"N/A"})
+        self.df4["reviewer"]=self.df4["reviewer"].replace({"":"N/A"})
+        blank = self.df4["reviewer"] == ""
+        self.fixed += blank.sum()
+        self.df4.loc[blank, "reviewer"] = "N/A"
+        self.fixed += self.df4["rating"].isna().sum()
+        avg = self.df4["rating"].mean()
+        self.df4["rating"] = self.df4["rating"].fillna(avg)
+        return self.df4
+        
+    def summary(self):
+        return self.fixed , self.removed
+        
 
-# YOUR CODE HERE:
 
+r=retail(df4)
 
-# ============================================
+print(r.convert())    
+print(r.summary())
+# ------------------------------------------------
+# QUESTION 5 — Hardest in this set
+# You're handed a raw signup export from a marketing
+# campaign. It's genuinely messy — missing names, mixed
+# casing everywhere, duplicate signups under slightly
+# different email formatting, and a phone number column
+# stored as text with inconsistent spacing.
 
-# QUESTION B4 — Asked in DA Internship Interviews
-# "Some user signups have duplicate accounts with slightly
-#  different email casing. Identify and remove the true
-#  duplicates."
 signups = {
-    "user_id": [1, 2, 3, 4, 5, 6],
-    "name": ["Shikhar", "Rahul", "Shikhar", "Priya",
-            "RAHUL", "Aditya"],
-    "email": ["shikhar@gmail.com", "rahul@yahoo.com",
-             "SHIKHAR@GMAIL.COM", "priya@gmail.com",
-             "rahul@YAHOO.com", "aditya@outlook.com"]
+    "full_name": ["Shikhar Sharma", "  rahul verma",
+                 None, "PRIYA SINGH  ", "Shikhar Sharma",
+                 "aditya kumar", " "],
+    "email": ["shikhar@gmail.com", "RAHUL@yahoo.com",
+             "x@x.com", "priya@GMAIL.com",
+             "SHIKHAR@gmail.com", "aditya@outlook.com",
+             "y@y.com"],
+    "phone": [" 9876543210", "9876543211 ", "9876543212",
+             "9876543213 ", " 9876543210", "9876543214",
+             "9876543215"]
 }
 
-# - Standardize email to lowercase first
-# - Now check for duplicates based on the standardized email
-#   using duplicated(subset=...)
-# - Drop these duplicates keeping the first occurrence
-# - Print how many true duplicate accounts were found
-# - Print the final cleaned signups DataFrame
-
-# YOUR CODE HERE:
-
-
-# ============================================
-
-# QUESTION B5 — HARDEST — Full Real World Scenario
-# "You're given a raw feedback form export. It's messy in
-#  every way real data is messy. Clean it completely and
-#  give us a usable dataset plus a summary of what you fixed."
-feedback_raw = {
-    "respondent": ["Shikhar", "  rahul", "PRIYA", None,
-                  "Shikhar", "aditya  ", "sneha", " "],
-    "rating": [5, 3, np.nan, 4, 5, 2, np.nan, 1],
-    "comment": ["Great service", "ok", "GOOD", "Bad",
-               "Great service", "could be better",
-               "excellent", "terrible"],
-    "department_visited": ["sales", "Sales", "SUPPORT",
-                           "support ", "sales", "Billing",
-                           " billing", "Support"]
-}
-
-# Build a class FeedbackCleaner with:
-# - Method clean() that handles ALL of these issues:
-#     1. Remove rows with null or blank respondent
-#     2. Standardize respondent name (strip + title case)
-#     3. Fill missing rating with the median rating
-#     4. Standardize department_visited (strip + title case)
-#     5. Remove exact duplicate rows (same respondent +
-#        same comment)
-# - Method summary() that prints:
-#     total rows before cleaning
-#     total rows after cleaning
-#     how many nulls were fixed
-#     how many duplicates were removed
-#     average rating after cleaning
-#
-# Create object, call clean(), call summary().
-
-# YOUR CODE HERE:
+# Produce a genuinely clean version of this signup list —
+# one row per real person, properly formatted name, email
+# and phone — and explain what made each removed row
+# invalid or duplicate.
