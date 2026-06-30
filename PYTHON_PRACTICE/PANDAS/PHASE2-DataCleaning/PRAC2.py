@@ -142,31 +142,25 @@ df4=pd.DataFrame(reviews)
 class retail:
     def __init__(self,df4):
         self.df4=df4
-        self.fixed=0
-        self.removed=0
-    def convert(self):
+    def chnage(self):
         self.df4["reviewer"]=self.df4["reviewer"].str.strip().str.upper()
-        self.df4["store"]=self.df4["store"].str.strip().str.upper()
-        self.fixed += self.df4["reviewer"].isna().sum()
-        self.df4["reviewer"]=self.df4["reviewer"].replace({None:"N/A"})
+        self.df4["reviewer"].replace("", np.nan, inplace=True)
+        fixable_rows = self.df4[
+            self.df4["reviewer"].isna() |
+            self.df4["rating"].isna()].shape[0]
+
         self.df4["reviewer"]=self.df4["reviewer"].replace({"":"N/A"})
-        blank = self.df4["reviewer"] == ""
-        self.fixed += blank.sum()
-        self.df4.loc[blank, "reviewer"] = "N/A"
-        self.fixed += self.df4["rating"].isna().sum()
-        avg = self.df4["rating"].mean()
-        self.df4["rating"] = self.df4["rating"].fillna(avg)
+        self.df4["rating"]=self.df4["rating"].fillna(0)
+        self.df4["store"]=self.df4["store"].str.strip().str.upper()
+
+    
         return self.df4
-        
-    def summary(self):
-        return self.fixed , self.removed
-        
+ 
+r1=retail(df4)
+
+print(r1.chnage())
 
 
-r=retail(df4)
-
-print(r.convert())    
-print(r.summary())
 # ------------------------------------------------
 # QUESTION 5 — Hardest in this set
 # You're handed a raw signup export from a marketing

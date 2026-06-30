@@ -25,4 +25,18 @@ FROM TRIANGLES;
 
 
 
+-- -Q2 Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession as a parenthetical
+ --(i.e.: enclosed in parentheses). For example: AnActorName(A), ADoctorName(D), AProfessorName(P), and ASingerName(S).
+-- Query the number of ocurrences of each occupation in OCCUPATIONS. Sort the occurrences in ascending order,
+-- and output them in the following format:
+
+
+
+SELECT
+    CONCAT(name, '(', LEFT(occupation, 1), ')') 
+FROM Occupations
+ORDER BY name ASC;
+SELECT CONCAT('There are a total of',' ', COUNT(Name),' ', LOWER(Occupation), 's.') FROM OCCUPATIONS 
+GROUP BY Occupation
+ ORDER BY COUNT(Name)ASC, LOWER(Occupation) ASC;
 
