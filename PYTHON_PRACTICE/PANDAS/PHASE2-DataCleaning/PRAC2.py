@@ -186,3 +186,102 @@ signups = {
 # one row per real person, properly formatted name, email
 # and phone — and explain what made each removed row
 # invalid or duplicate.
+
+
+df5 = pd.DataFrame(signups)
+
+clean_data = []
+bad_data = []
+
+class ETL:
+    def __init__(self, df5):
+        self.df5 = df5
+
+    def clear(self):
+        for _, row in self.df5.iterrows():
+
+            if pd.isna(row["full_name"]):
+                row["full_name"] = ""
+            else:
+                row["full_name"] = row["full_name"].strip().title()
+
+            row["email"] = row["email"].lower().strip()
+            row["phone"] = row["phone"].strip()
+
+            if row["full_name"] == "":
+                row["reason"] = "Missing/Blank Space"
+                bad_data.append(row.to_dict())
+                continue
+
+            clean_data.append(row.to_dict())
+        clean_df = pd.DataFrame(clean_data)
+        duplicate_rows = clean_df[clean_df.duplicated(subset=["email"], keep="first")]
+
+        for _, row in duplicate_rows.iterrows():
+            row["reason"] = "Duplicate Email"
+            bad_data.append(row.to_dict())
+
+        clean_df = clean_df.drop_duplicates(subset=["email"],keep="first")
+
+        return clean_df, pd.DataFrame(bad_data)
+
+
+etl = ETL(df5)
+
+clean_df, bad_df = etl.clear()
+
+print("CLEAN DATA\n")
+print(clean_df)
+
+print("\nBAD DATA\n")
+print(bad_df)
+
+
+# QUESTION 6
+# A hospital exports patient records from two different
+# data entry systems. Both systems recorded the same
+# patients but with inconsistent formatting — names have
+# mixed casing and extra spaces, the blood group column
+# has inconsistent values like "a+", "A +", "A+",
+# and some ages are stored as strings while others are
+# integers. Medical staff need one clean, standardized
+# record per patient with all columns in usable formats.
+
+patients = {
+    "patient_id": [1, 2, 3, 4, 5, 1, 6, 3],
+    "name": ["  shikhar", "RAHUL  ", "Priya", "  ADITYA",
+            "sneha", "Shikhar  ", "karan", "PRIYA  "],
+    "age": ["28", "35", 42, "29", "31", 28, "45", 42],
+    "blood_group": ["a+", "B+", "A +", "o-",
+                   "AB+", "A+", "b+", "A +"]
+}
+
+# Clean this completely — one record per patient_id,
+# standardized names, age as integer, blood group
+# standardized (remove spaces, uppercase).
+# Report how many duplicate records were merged.
+
+clean_data=[]
+bad_data=[]
+df6=pd.DataFrame(patients)
+class hospital:
+    def __init__(self,df6):
+        self.df6=df6
+    
+    def data_system(self):
+        self.df6["name"]=self.df6["name"].str.strip().str.title()
+        self.df6["age"]=self.df6["age"].astype(int)
+        self.df6["blood_group"] = (self.df6["blood_group"].str.replace(" ", "", regex=False).str.upper())
+        duplicate_count=self.df6.duplicated(subset=["patient_id"],keep="first").sum()
+        self.df6=self.df6.drop_duplicates(subset=["patient_id"],keep="first")
+
+        print("DUPLICATE RECORDS MERGED :",duplicate_count)
+
+
+        return self.df6
+    
+
+
+h=hospital(df6)
+print(h.data_system())
+# ============================================
