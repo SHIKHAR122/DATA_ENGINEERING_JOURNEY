@@ -285,3 +285,56 @@ class hospital:
 h=hospital(df6)
 print(h.data_system())
 # ============================================
+# QUESTION 7 (REPLACEMENT)
+# A logistics company tracks package deliveries. The
+# dataset has inconsistent courier names due to manual
+# entry, some delivery status values are abbreviated
+# inconsistently, and a few package weights are stored
+# as strings with units attached like "2.5kg" or "3kg"
+# making them unusable for calculations.
+# The operations team needs a fully clean dataset where
+# courier names are standardized, status values are
+# consistent full words, and weight is a usable float.
+
+deliveries = {
+    "package_id": [1, 2, 3, 4, 5, 6, 7],
+    "courier": ["  bluedart", "DELHIVERY  ", "Bluedart",
+               "delhivery", "EKART  ", "  ekart", "Bluedart"],
+    "status": ["dlvd", "pending", "DLVD", "Pending",
+              "failed", "FAILED", "dlvd"],
+    "weight": ["2.5kg", "3kg", "1.8kg", "4kg",
+              "2kg", "3.5kg", "1.8kg"]
+}
+
+# Clean courier names (strip + title case),
+# standardize status ("dlvd" -> "Delivered",
+# "pending" -> "Pending", "failed" -> "Failed"),
+# extract the numeric weight from the string and
+# store it as a float column.
+# Report the value_counts() of status and courier
+# after cleaning to confirm standardization worked.
+df7=pd.DataFrame(deliveries)
+class Logistic:
+    def __init__(self, df7):
+        self.df7 = df7
+
+    def cleanse(self):
+        self.df7["courier"] = self.df7["courier"].str.strip().str.title()
+
+        self.df7["status"] = self.df7["status"].str.lower().str.strip()
+
+        mapping = {
+            "dlvd": "Delivered",
+            "pending": "Pending",
+            "failed": "Failed"
+        }
+
+        self.df7["status"] = self.df7["status"].replace(mapping)
+        self.df7["weight"] = (self.df7["weight"].str.replace("kg", "", regex=False).astype(float))
+        self.df7["weight"] = self.df7["weight"].astype(float)
+
+        return self.df7
+
+
+l = Logistic(df7)
+print(l.cleanse())
