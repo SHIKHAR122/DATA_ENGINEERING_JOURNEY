@@ -338,3 +338,9 @@ class Logistic:
 
 l = Logistic(df7)
 print(l.cleanse())
+
+
+
+
+
+
