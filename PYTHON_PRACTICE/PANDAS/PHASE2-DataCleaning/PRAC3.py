@@ -108,7 +108,19 @@ class Panda_practice:
         print("\nTHE DATA TYPE OF EACH COLUMN IS : \n" , self.df.dtypes)
 
     
-        
+    def fillnulls(self):
+        self.df["salary"] = self.df["salary"].fillna(self.df["salary"].mean)
+        self.df["experience"] = self.df["experience"].fillna(0)
+        self.df["department"] = self.df["department"].fillna("Unknown")
+        self.df["name"] = self.df["name"].fillna("Missing")
+        self.df = self.df.dropna(subset=["email"])
+
+        return self.df  
+
+pp=Panda_practice(df)
+print(pp.fillnulls())
+
+
 # ==========================================================
 # PART 2 - Missing Values
 # ==========================================================
@@ -140,8 +152,13 @@ class Panda_practice:
 # 17. Print the new shape of the DataFrame.
     def duplicate(self):
         print("THE ROWS WHICH ARE DUPLICATES ARE : ",self.df.duplicated())
-        print("THE TOTAL NUMBER OF DUPLICATED ROWS ARE : ",self.df.duplicated.sum())
-        
+        print("THE TOTAL NUMBER OF DUPLICATED ROWS ARE : ",self.df.duplicated().sum())
+        self.df=self.df.drop_duplicates()
+        print("\n THE NEW SHAPE OF THE DATA FRAME IS :\n",self.df.shape )
+
+
+        return self.df
+
 # ==========================================================
 # PART 4 - String Cleaning
 # ==========================================================
@@ -166,6 +183,26 @@ class Panda_practice:
 #       active -> Active
 #       inactive -> Inactive
 #       pending -> Pending
+    def convert(self):
+        self.df["name"]=self.df["name"].str.title().str.strip()
+        self.df["department"]=self.df["department"].str.lower().str.strip()
+        self.df["email"]=self.df["email"].str.lower().str.strip()
+        self.df["status"] = self.df["status"].str.lower()
+        self.df["department"] =self.df["department"].replace({
+            "it" : "IT" , 
+            "hr":"HR" ,
+            "finance":"Finance" , 
+            "unknown":"Unknown"
+        })
+        self.df["status"]=self.df["status"].replace({
+            "active" : "Active" ,
+            "inactive":"Inactive" , 
+            "pending":"Pending"
+        })
+        return self.df
+
+
+
 
 # ==========================================================
 # PART 5 - Data Type Conversion
@@ -173,7 +210,13 @@ class Panda_practice:
 
 # 22. Convert Salary from string to integer.
 # 23. Verify the data types again.
+    def data(self):
+        self.df["salary"] = self.df["salary"].astype(int)
 
+        print("\nDATA TYPES AFTER CONVERSION:\n")
+        print(self.df.dtypes)
+
+        return self.df
 # ==========================================================
 # PART 6 - Creating New Columns
 # ==========================================================
@@ -181,86 +224,13 @@ class Panda_practice:
 # 24. Create a new column called "Email_Domain"
 #     Example:
 #     shikhar@gmail.com -> gmail.com
+    def new_col(self):
+        self.df["email_domain"] = self.df.apply(
+        lambda row: row["email"].split("@")[1],
+        axis=1
+    )
 
-# Hint:
-# .str.split("@").str[1]
-
-# 25. Create a new column called "Salary_Category"
-
-# Rules:
-# Salary < 50000           -> Low
-# Salary between 50000-65000 -> Medium
-# Salary > 65000           -> High
-
-# (Hint: Use apply() or np.select())
-
-# ==========================================================
-# PART 7 - Filtering
-# ==========================================================
-
-# 26. Display all Gmail users.
-# 27. Display all employees from the IT department.
-# 28. Display employees earning more than ₹50,000.
-# 29. Display employees having experience greater than 3 years.
-# 30. Display employees whose names contain "ra" (case insensitive).
-
-# ==========================================================
-# PART 8 - Statistics
-# ==========================================================
-
-# 31. Find:
-#       - Average Salary
-#       - Maximum Salary
-#       - Minimum Salary
-
-# 32. Count employees in each department.
-# 33. Count employees in each status.
-# 34. Count unique email domains.
-# 35. Display all unique departments.
-
-# ==========================================================
-# PART 9 - Rename Columns
-# ==========================================================
-
-# Rename the following columns:
-
-# Employee ID -> emp_id
-# Name        -> emp_name
-# Salary      -> salary
-# Department  -> department
-
-# ==========================================================
-# PART 10 - Final Output
-# ==========================================================
-
-# 36. Print the cleaned DataFrame.
-# 37. Print df.info() to verify the cleaning.
-# 38. Save the cleaned DataFrame as:
-#
-#     clean_employee_data.csv
-#
-# using:
-#
-# df.to_csv()
-#
-# ==========================================================
-# BONUS (Interview Level)
-# ==========================================================
-
-# 39. Which department has the highest average salary?
-
-# 40. Which email domain occurs most frequently?
-
-# 41. How many employees are Active?
-
-# 42. Sort employees by Salary in descending order.
-
-# 43. Reset the index after removing duplicates.
-
-# 44. Save only Gmail users into a new DataFrame called:
-#
-# gmail_users
-#
-# and print it.
-
-
+        return self.df
+    
+pp=Panda_practice(df)
+print(pp.new_col())
