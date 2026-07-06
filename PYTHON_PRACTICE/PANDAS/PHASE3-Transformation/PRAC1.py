@@ -117,8 +117,29 @@ hr_data = {
 #   using groupby() with agg()
 # - Method highest_paid_dept() that returns the department
 #   name with the highest average salary
+df2=pd.DataFrame(hr_data)
+class HRAnalyzer:
+    def __init__(self,df2):
+        self.df2=df2
 
+    def method_clean(self):
+        self.df2["department"]=self.df2["department"].str.strip().str.title()
+        self.df2["salary"] = self.df2["salary"].fillna(self.df2.groupby("department")["salary"].transform("mean"))
+        return self.df2
 
+    def debt_stats(self):
+        self.df2=self.df2.groupby("department").agg({"salary":"mean","name":"count"})     
+        return self.df2
+    
+
+    def highest_paid_dept(self):
+        print("\nTHE DEPARTMENT WITH THE HIGHEST PAID EMPLOYEES IS :\n")
+        return self.df2.groupby("department")["salary"].sum().idxmax()
+    
+hr=HRAnalyzer(df2)
+hr.method_clean()
+print(hr.debt_stats())
+print(hr.highest_paid_dept())
 # ============================================
 
 # QUESTION 3
@@ -150,8 +171,39 @@ school_data = {
 #   average marks per branch using groupby()
 # - Method top_students(n) that returns top n students
 #   sorted by total marks
+df3=pd.DataFrame(school_data)
+class SchoolReport:
+    def __init__(self,df3):
+        self.df3=df3
+    def Clean(self):
+        self.df3["branch"]=self.df3["branch"].str.strip().str.title()
+        subjects=["maths","science","english"]
+        for subject in subjects:
+            self.df3[subject]=self.df3[subject].fillna(self.df3[subject].mean())
+
+        return self.df3
+    def add_student_stats(self):
+        self.df3["total_marks"] = (self.df3["maths"]+self.df3["science"]+self.df3["english"])
+        self.df3["average_marks"] = self.df3[["maths", "science", "english"]].mean(axis=1)
+        self.df3["grades"]=self.df3["average_marks"].apply(lambda avg: "A" if avg>=85 else "B" if avg>=70 else "C" if avg>=55 else "D" if avg>=40 else "F")
+        return self.df3
+     
+    def branch_performance(self):
+        self.df3=self.df3.groupby("branch")["average_marks"].sum()
+    
+    
+
+    def top_students(self,n):
 
 
+
+
+    
+sr=SchoolReport(df3)
+print(sr.Clean())
+print(sr.add_student_stats())
+print(sr.add_student_stats())
+print(sr.branch_performance())
 # ============================================
 
 # QUESTION 4 — HARDEST
