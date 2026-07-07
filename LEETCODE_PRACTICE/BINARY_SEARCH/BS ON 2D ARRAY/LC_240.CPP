@@ -42,3 +42,34 @@ public:
     }
    
 };
+
+
+
+//THE OPTIMAL APPROACH IS -
+// IN THIS PROBLEM WE ARE GOING TO USE THE STAIR CASE APPROACH ...
+
+
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m=matrix[0].size();
+        int n=matrix.size();
+        int row=0;
+        int col=m-1;
+        while(row<n && col>=0)
+        {
+            if(matrix[row][col]==target)
+            {
+                return true;
+            }
+            else if(matrix[row][col]<target)
+            {
+                row++;
+            }
+            else {
+                col--;
+            }
+        }
+        return false;
+    }
+};
