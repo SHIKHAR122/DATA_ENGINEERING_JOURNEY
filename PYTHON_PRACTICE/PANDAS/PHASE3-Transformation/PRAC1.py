@@ -175,25 +175,35 @@ df3=pd.DataFrame(school_data)
 class SchoolReport:
     def __init__(self,df3):
         self.df3=df3
+
+
     def Clean(self):
         self.df3["branch"]=self.df3["branch"].str.strip().str.title()
         subjects=["maths","science","english"]
         for subject in subjects:
             self.df3[subject]=self.df3[subject].fillna(self.df3[subject].mean())
-
+        print("\nTHE CLEANED DATA FRAME IS :\n")
         return self.df3
+    
+
+
     def add_student_stats(self):
         self.df3["total_marks"] = (self.df3["maths"]+self.df3["science"]+self.df3["english"])
         self.df3["average_marks"] = self.df3[["maths", "science", "english"]].mean(axis=1)
         self.df3["grades"]=self.df3["average_marks"].apply(lambda avg: "A" if avg>=85 else "B" if avg>=70 else "C" if avg>=55 else "D" if avg>=40 else "F")
+        print("\nTHE TOTAL MARKS  , AVG MARKS , GRADES OF THE STUDENTS ARE AS FOLLOWED: \n")
         return self.df3
      
+     
     def branch_performance(self):
-        self.df3=self.df3.groupby("branch")["average_marks"].sum()
+        print("\nTHE PERFORMANCE OF THE STUDENTS ACCORDING TO THEIR BRANCH ARE : \n")
+        return self.df3.groupby("branch")["average_marks"].sum()
     
     
 
     def top_students(self,n):
+        print("THE TOP" ,n , "STUDENTS ACCORDING TO THE AVERAGE MARKS ARE: ")
+        return self.df3.sort_values(by="average_marks", ascending=False).head(n)
 
 
 
@@ -204,6 +214,7 @@ print(sr.Clean())
 print(sr.add_student_stats())
 print(sr.add_student_stats())
 print(sr.branch_performance())
+print(sr.top_students(3))
 # ============================================
 
 # QUESTION 4 — HARDEST
@@ -249,3 +260,59 @@ order_data = {
 #       value_counts() of revenue_tier
 # - Method run(filepath) that calls all steps
 #   in order and prints a final summary report
+
+df4=pd.DataFrame(order_data)
+class OrderPipeline:
+    def __init__(self,df4):
+        self.df4=df4
+
+
+    def write_raw_csv(self,filepath):
+        self.df4.to_csv(filepath, index=False)
+        print("CSV written successfully.")
+        
+    def read_csv(self,filepath):
+        try:
+            self.df4=pd.read_csv(filepath)
+            return self.df4
+        except FileNotFoundError as e:
+            print("THE FILE IS NOT FOUND IN THE SYSTEM :" ,e)
+
+    def clean(self):
+        self.df4.drop_duplicates(subset=["order_id"] ,inplace=True)
+        l=["customer" , "product" , "category" , ]
+        for col in l:
+             self.df4[col]=self.df4[col].apply(lambda x: x.strip().title())
+    
+        self.df4["quantity"]=self.df4["quantity"].fillna(self.df4["quantity"].mean())
+
+        return self.df4
+    print("\n")
+    def transform(self):
+        self.df4["revenue"]=self.df4["quantity"]*self.df4["unit_price"]
+        self.df4["revenue_tier"]=self.df4["revenue"].apply(lambda rev : "high" if rev>=100000 else "medium" if rev>=10000 else "low" )
+
+        return self.df4
+    
+
+    def analyze(self):
+        print("\nTHE TOTAL REVENUE PER CATEGORY IS:\n")
+        category_revenue = self.df4.groupby("category")["revenue"].sum()
+        print(category_revenue)
+        print("\nTHE TOP CUSTOMER BY TOTAL REVENUE IS:\n")
+        top_customer = self.df4.groupby("customer")["revenue"].sum().idxmax()
+        print(top_customer)
+        return category_revenue , top_customer
+    
+
+
+    def run(self):
+        self.write_raw_csv("orders.csv")
+        self.read_csv("orders.csv")
+        print(self.clean())
+        print(self.transform())
+        print(self.analyze())
+
+
+op=OrderPipeline(df4)
+print(op.run())

@@ -1,0 +1,9 @@
+order_id,customer,product,category,quantity,unit_price
+101,  shikhar,Laptop,Electronics,2.0,65000
+102,RAHUL  ,laptop  ,electronics,1.0,65000
+103,Priya,MOUSE,Electronics,,500
+104,  ADITYA,Mouse,Electronics,3.0,500
+105,sneha,KEYBOARD,Accessories,2.0,1200
+106,karan  ,keyboard,accessories,,1200
+107,Meera,Monitor,Electronics,1.0,15000
+101,  shikhar,Laptop,Electronics,2.0,65000
