@@ -35,6 +35,42 @@ transactions = {
 #   and prints a clean final report
 
 # YOUR CODE HERE:
-df3-
+df=pd.DataFrame(transactions)
 class Ecommerce:
-    def __init__(self, df3):
+    def __init__(self, df):    
+        self.df=df
+    
+
+    def clean(self):
+        self.df.drop_duplicates(subset=["txn_id"] ,inplace=True)
+        l=["customer" , "category"]
+        for col in l :
+             self.df[col]=self.df[col].apply(lambda x: x.strip().title())
+        self.df["amount"]=self.df["amount"].fillna(self.df.groupby("category")["amount"].transform("median"))
+        return self.df
+    
+    def category_summary(self):
+        total_amount= self.df.groupby("category")["amount"].sum()
+        transaction_count = self.df.groupby("category").size()
+        return total_amount , transaction_count
+    
+    def customer_summary(self):
+        print(" \n THE TOTAL AMOUNT SPENT BY CUSTOMERS ARE : \n")
+        return self.df.groupby("customer")["amount"].sum().sort_values(ascending=False)
+        
+    def spending_tier(self):
+        self.df["tier"]= self.df["amount"].apply(lambda amount : "Premium" if amount>=3000 else "Regular" if amount>=1000 else "Budget")
+        return self.df
+    
+    def run(self):
+        
+        print(self.clean())
+        print(self.customer_summary())
+        print(self.category_summary())
+
+
+
+e=Ecommerce(df)
+e.run()
+
+
