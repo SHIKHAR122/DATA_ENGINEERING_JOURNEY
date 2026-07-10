@@ -98,3 +98,34 @@ public:
         return total ; 
     }
 };
+
+
+
+//THE MOST OPTIMAL APPROACH TO SOLVE THIS PROBLEM IS TO USE THE MONOTONIC STACK - WHICH WILL GIVE RESULT IN THE  O(N) COMPLEXITY
+
+
+// APPRPOACH NUMBER 4  - THE DECREASING MONOTONIC STACK
+
+
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int n = height.size();
+        int ans = 0;
+        stack<int> st;
+        for (int i = 0; i < n; i++) {
+            while (!st.empty() && height[i] > height[st.top()]) {
+                int current = st.top();
+                st.pop();
+                if (st.empty())
+                    break;
+                int left = st.top();
+                int width = i - left - 1;
+                int boundedHeight = min(height[left], height[i]) - height[current];
+                ans += width * boundedHeight;
+            }
+            st.push(i);
+        }
+        return ans;
+    }
+};
