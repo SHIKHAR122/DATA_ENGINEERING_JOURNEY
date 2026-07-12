@@ -30,3 +30,27 @@ public:
         return {};
     }
 };
+
+
+
+//APPROACH NUMBER 2 - USING THE HASHMAP APPROACH - 
+
+//THIS APPROACH WILL HAVE COMPLEXITY OF O(n)
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n =nums.size();
+        unordered_map<int, int> numMap;
+        int complement;
+        for(int i =0 ;i<nums.size();i++){
+            complement=target-nums[i];
+            if(numMap.count(complement))
+            {
+                return {numMap[complement],i};
+            }
+                numMap[nums[i]]=i;
+        }  
+        return {}; 
+    }
+};
