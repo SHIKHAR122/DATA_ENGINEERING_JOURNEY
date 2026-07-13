@@ -28,7 +28,7 @@ employee_data = {
                     "High", "Low"]
 }
 
-df = pd.DataFrame(employee_data)
+
 
 # ============================================
 # QUESTION 1 — value_counts() Deep Dive
@@ -45,8 +45,25 @@ df = pd.DataFrame(employee_data)
 #   more than once — use value_counts() + filtering
 
 # YOUR CODE HERE:
+df=pd.DataFrame(employee_data)
+class Count:
+    def __init__(self,df):
+        self.df=df
+    def loader(self):
+        dept_count=self.df["department"].value_counts()
+        city_count=self.df["city"].value_counts()
+        performance=self.df["performance"].value_counts(normalize=True)
+        city_emp=self.df["city"].value_counts().idxmax()
+        perform= self.df["performance"].value_counts()
+        duplicate=perform[perform>1]
+        print( "\nTHE NUMBER OF EMPLOYEES IN EACH DEPARTMENT IS : \n",dept_count)  
+        print("\nTHE NUMBER OF EMPLOYEE IN EACH CITY ARE: \n", city_count) 
+        print("THE PERFORMANCE PERCENTAGE ARE: " , performance)
+        print("\n THE CITY WITH THE MOST EMPLOYEES ARE :\n" , city_emp)
+        print("\n THE EMPLOYEES WHERE PERFORMANCE APPEARED MORE THAN ONCE IS : \n" ,duplicate)
 
-
+obj=Count(df)
+obj.loader()
 # ============================================
 # QUESTION 2 — agg() Deep Dive
 # Using the employee DataFrame:
@@ -63,8 +80,29 @@ df = pd.DataFrame(employee_data)
 #   the highest average salary
 
 # YOUR CODE HERE:
+class Data:
+    def __init__(self, df):
+        self.df = df
 
-
+    def work(self):
+        self.df["salary"]=self.df["salary"].fillna(self.df.groupby("department")["salary"].transform("mean"))
+        summary=self.df.groupby("department")["salary"].agg(["mean", "max" , "min" , "count"])
+        city_summary=self.df.groupby("city").agg({
+            "salary":"sum" , 
+            "experience_years":"mean" , 
+            "name" :"count"
+        })  
+        combination= self.df.groupby(["department" , "city"])["salary"].mean()
+        highest_avg_salary=self.df.groupby(["department" , "city"])["salary"].mean().idxmax()
+        print("\nTHE FIXED DATA FRAME IS : \n", self.df ) 
+        print("\nTHE  MEAN , MAX , MIN , COUNT OF THE FIXED DATA FRAME IS :\n", summary) 
+        print("\nTHE DETAILS FOR EACH CITY IS : \n" , city_summary)
+        print("\nTHE AVERAGE SALARY FOR EACH DEPARTMENT IN EACH CITY IS : \n" , combination)
+        print("\n THE DEPARTMENT IN THE EACH CITY WITH THE HIGHEST AVERAGE SALARY IS : \n",highest_avg_salary)
+        
+    
+D = Data(df)
+D.work()
 # ============================================
 # QUESTION 3 — pivot_table()
 # Using the employee DataFrame:
