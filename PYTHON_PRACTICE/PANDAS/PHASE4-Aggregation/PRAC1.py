@@ -118,8 +118,18 @@ D.work()
 #   and explain in a comment what margins adds
 
 # YOUR CODE HERE:
+class Employee : 
+    def __init__(self , df):
+        self.df=df
+    def work(self):
+        pivot= pd.pivot_table(df  ,   index="department" ,  columns="city" ,values="salary" , aggfunc="mean" )
+        employee_count=pd.pivot_table(df , index="performance", columns="department" , values="name" , aggfunc="count")
+        total_salary=pd.pivot_table(df , index="city" , columns="performance" , values="salary" , aggfunc="mean")
+        margin_value=pd.pivot_table(df , index="performance", columns="department" , values="name" , aggfunc="count",margins=True)
+        return pivot , employee_count , total_salary , margin_value
 
-
+e=Employee(df)
+print(e.work())
 # ============================================
 # QUESTION 4 — crosstab()
 # Using the employee DataFrame:
@@ -127,16 +137,19 @@ D.work()
 # - Create a crosstab of department vs city
 #   (shows how many employees from each dept are in each city)
 # - Create a crosstab of performance vs department
-# - Add normalize=True to one crosstab and explain
-#   in a comment the difference between crosstab
-#   with and without normalize
-# - In a comment explain: what is the difference
-#   between pivot_table and crosstab? When would
-#   you use one over the other?
-
+# - Add normalize=True to one crosstab 
 # YOUR CODE HERE:
+class Demo:
+    def __init__(self,df):
+        self.df=df
+    def cross(self):
+        table1=pd.crosstab(df["department"] , df["city"])
+        print("\nTHE CROSS TABLE OF DEPARTMENT VS. CITY IS : \n" , table1)
+        table2=pd.crosstab(df["performance"] , df["department"], normalize=True)
+        print("\nTHE CROSS TABLE OF PERFORMANCE VS . DEPARTMENT IS :\n",table2)
 
-
+d=Demo(df)
+d.cross()
 # ============================================
 # QUESTION 5 — HARDEST — Full Integration
 # Build a class EmployeeAnalytics with ALL of the above:
