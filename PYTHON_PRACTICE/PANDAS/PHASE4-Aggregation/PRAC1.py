@@ -173,9 +173,62 @@ d.cross()
 #       "Top" if salary >= 85000
 #       "Mid" if salary >= 55000
 #       "Entry" otherwise
-# - Method run() that calls all methods and prints
-#       a complete analytics report
 
 # YOUR CODE HERE:
 
+class EmployeeAnalytics:
+    def __init__(self,df):
+        self.df=df
 
+
+    def clean(self):
+        self.df["salary"]=self.df["salary"].fillna(self.df.groupby("department")["salary"].transform("mean"))
+        column=["department" , "city"]
+        for col in column : 
+           df[col]=df[col].str.strip().str.title() 
+        return self.df
+    
+    def headcount_report(self):
+        dept_count=self.df["department"].value_counts()
+        city_count=self.df["city"].value_counts()
+        performance_report=self.df["performance"].value_counts()
+        report={
+            "department_report" : dept_count.to_dict(), 
+            "city_report" : city_count.to_dict() , 
+            "performance_report": performance_report.to_dict()
+        }
+        return report    
+    
+
+    def salary_report(self):
+        salary_summary=self.df.groupby("department")["salary"].agg(["mean", "max" , "min" , "count"])
+
+        return salary_summary
+        
+    def performance_pivot(self):
+        table=pd.pivot_table(
+            self.df , 
+            index="performance" , 
+            columns="department" ,
+            values="salary" ,
+            aggfunc="mean" 
+        )
+        return table 
+    
+    def city_dept_crrosstab(self):
+        combined_table=pd.crosstab(self.df["city"] , self.df["department"])
+        return combined_table
+    
+
+    def flag_high_earners(self):
+        self.df["earner_flag"]=self.df["salary"].apply(lambda salary : "TOP" if salary>=85000 else "MID" if salary>=55000 else "ENTRY")
+        return self.df
+    
+    
+i=EmployeeAnalytics(df)
+print(i.clean())
+print("THE REPORT OF THE GIVEN DATA IS :",i.headcount_report())
+print("\nTHE REPORT OF THE SALARY FOR THE GIVEN DATA SET IS : \n" , i.salary_report())
+print("\nTHE PERFORMANCE TABLE IS :\n" , i.performance_pivot())
+print("\nTHE CITY CROSS TABLE COMBINATION  IS : \n" , i.city_dept_crrosstab())
+print("\n THE FLAGGED SALARY DATA FRAME IS : \n" , i.flag_high_earners())
