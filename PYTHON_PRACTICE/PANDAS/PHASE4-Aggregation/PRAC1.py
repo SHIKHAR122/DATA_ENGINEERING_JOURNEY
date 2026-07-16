@@ -1,6 +1,6 @@
 # ============================================
-# PANDAS PHASE 3 — Aggregation Deep Dive
-# Date: 9 July 2026
+# PANDAS PHASE 4 — Aggregation Deep Dive
+# Date: 11 July 2026
 # Topics: value_counts, agg, pivot_table, crosstab
 # Integrated with: OOP, Exception Handling, Lambda, apply()
 # ============================================
