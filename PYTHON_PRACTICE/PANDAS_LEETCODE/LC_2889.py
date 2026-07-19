@@ -1,13 +1,13 @@
 # LEETCODE PROBLEM NUMBER - 2889 - RESHAPE DATA PIVOT 
 
-DataFrame weather
-+-------------+--------+
-| Column Name | Type   |
-+-------------+--------+
-| city        | object |
-| month       | object |
-| temperature | int    |
-+-------------+--------+
+# DataFrame weather
+# +-------------+--------+
+# | Column Name | Type   |
+# +-------------+--------+
+# | city        | object |
+# | month       | object |
+# | temperature | int    |
+# +-------------+--------+
 # Write a solution to pivot the data so that each row represents temperatures for a specific month, and each city is a separate column.
 
 # The result format is in the following example.
