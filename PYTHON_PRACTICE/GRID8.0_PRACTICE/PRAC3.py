@@ -104,5 +104,53 @@ formatted string (or 'NA').
 """
 
 def solve(drivers, trips):
-    # TODO: implement
-    pass
+
+    driver = {}
+
+    for d in drivers:
+        driver[d["driverId"]] = d
+
+    total_rating = {}
+    trip_count = {}
+
+    for t in trips:
+
+        driver_id = t["driverId"]
+
+        if driver_id not in driver:
+            continue
+
+        if t["status"] != "COMPLETED":
+            continue
+
+        if t["rating"] < 1 or t["rating"] > 5:
+            continue
+
+        if driver_id not in total_rating:
+            total_rating[driver_id] = 0
+            trip_count[driver_id] = 0
+        total_rating[driver_id] += t["rating"]
+        trip_count[driver_id] += 1
+
+    result = []
+
+    for driver_id in total_rating:
+
+        avg = round(total_rating[driver_id] / trip_count[driver_id],1)
+
+        if avg >= 4.5:
+            result.append((avg, driver_id,driver[driver_id]["driverName"]))
+    if len(result) == 0:
+        return "NA"
+
+
+    result.sort(key=lambda x: (-x[0], x[1]))
+
+    output = []
+
+    for avg, driver_id, driver_name in result:
+        output.append(
+            f"{driver_id}-{driver_name}-{avg}"
+        )
+
+    return "#".join(output)

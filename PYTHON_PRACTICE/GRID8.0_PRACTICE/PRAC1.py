@@ -95,6 +95,21 @@ YOUR TASK: Write solve(employees, attendance) that returns the
 final formatted string (or 'NA').
 ==================================================================
 """
+
+employees = [
+    {"employeeId": "E1", "employeeName": "Ravi", "department": "Sales"},
+    {"employeeId": "E2", "employeeName": "Meena", "department": "Ops"},
+    {"employeeId": "E3", "employeeName": "Sam", "department": "IT"}
+]
+
+attendance = [
+    {"recordId": "A1", "employeeId": "E1", "month": "Jan", "daysPresent": 28, "totalDays": 30, "status": "VALID"},
+    {"recordId": "A2", "employeeId": "E1", "month": "Feb", "daysPresent": 27, "totalDays": 28, "status": "VALID"},
+    {"recordId": "A3", "employeeId": "E2", "month": "Jan", "daysPresent": 20, "totalDays": 30, "status": "VALID"},
+    {"recordId": "A4", "employeeId": "E3", "month": "Jan", "daysPresent": 25, "totalDays": 30, "status": "CANCELLED"}
+]
+
+
 def solve(employees, attendance):
     emp={}
     for e in employees:
@@ -145,3 +160,5 @@ def solve(employees, attendance):
 
     
     return "#".join(result)
+
+print(solve(employees , attendance))
