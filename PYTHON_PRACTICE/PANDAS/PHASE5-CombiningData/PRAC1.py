@@ -201,8 +201,26 @@ attendance = pd.DataFrame({
 #   use apply() with axis=1
 
 # YOUR CODE HERE:
+class work:
+    def __init__(self,students, attendance , marks):
+        self.students=students
+        self.attendance=attendance
+        self.marks=marks
 
 
+    def transform(self):
+        left_joined_df= pd.merge(students,marks, on= "student_id", how='left')
+        final_left_df=pd.merge(left_joined_df,attendance,on="student_id",how='left')
+        final_left_df.fillna({"maths": 0,"science": 0,"attendance_pct": 0}, inplace=True)
+        final_left_df["result"]=final_left_df.apply(lambda df: "PASS" if df["maths"]>=40 and df["science"]>=40 and df["attendance_pct"]>=75 else "FAIL",axis=1)
+
+        return final_left_df
+
+
+
+    
+w=work(students , attendance, marks)
+print("\nTHE TABLE RESULT IS : \n",w.transform())
 # ============================================
 # QUESTION 5 — HARDEST — Full Integration
 # Build a class DataMerger that simulates
