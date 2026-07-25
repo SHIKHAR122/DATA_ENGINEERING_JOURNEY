@@ -269,3 +269,40 @@ raw_products = pd.DataFrame({
 #       prints a complete pipeline report
 
 # YOUR CODE HERE:
+
+class DataMerger:
+
+    def __init__(self, raw_orders, raw_customers, raw_products):
+        self.raw_orders = raw_orders
+        self.raw_customers = raw_customers
+        self.raw_products = raw_products
+
+    def merge_all(self):
+
+        df = pd.merge(self.raw_orders,self.raw_customers,on="customer_id",how="left")
+        df = pd.merge(df,self.raw_products,on="product_id",how="left")
+        # df.fillna({"name": "NA","segment": "NA","quantity": df["quantity"].median()}, inplace=True)
+        df["revenue"] = df["quantity"] * df["unit_price"]
+        return df
+
+    def segment_revenue(self, final_df):
+        return final_df.groupby("segment")["revenue"].sum()
+
+
+    def flag_Missing(self):
+        df=self.merge_all()
+
+        df["customer_missing"]=df["name"].isna()
+        df["segment_missing"]=df["segment"].isna()
+        df["quantity_missing"]=df["quantity"].isna()
+
+
+        return df
+
+
+
+dm = DataMerger(raw_orders, raw_customers, raw_products)
+df = dm.merge_all()
+print(df)
+print(dm.segment_revenue(df))
+print(dm.flag_Missing())
