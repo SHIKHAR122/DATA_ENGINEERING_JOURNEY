@@ -164,9 +164,35 @@ class SalesConsolidation :
         self.product_info=product_info
 
     def consolidate(self):
-        
+        self.jan_sales["month"] = "January"
+        self.feb_sales["month"] = "February"
+        self.mar_sales["month"] = "March"
+        all_months=pd.concat([self.jan_sales , self.feb_sales, self.mar_sales], ignore_index=True)
+        final_df= pd.merge(all_months , product_info , on="product_id" ,how='left')
+        return final_df
+
+    def monthly_summary(self):
+        df=self.consolidate()
+        return (df.groupby("month")[["revenue" , "units_sold"]].sum().reset_index())
 
 
+    def category_performance(self):
+        df1=self.consolidate()
+        return(df1.groupby("category")[["revenue"]].sum().reset_index()) 
+
+
+    def top_product_per_month(self):
+        df = self.consolidate()
+        idx=df.groupby("month")["revenue"].idxmax()
+        return (df.loc[idx, ["month", "product", "revenue"]].reset_index(drop=True))
+
+
+    
+sc=SalesConsolidation(jan_sales, feb_sales, mar_sales,product_info)
+print("\nTHE FINAL RESULT IS : \n", sc.consolidate())
+print("\nTHE MONTHLY SUMMARY IS : \n" , sc.monthly_summary())
+print("\nTHE CATEGORY PERFORMANCE IS : \n", sc.category_performance())
+print("\nTHR TOP PRODUCTS PER MONTH IS : \n", sc.top_product_per_month())
 # ============================================
 
 # QUESTION 8 — HARDEST — Multi-source Data Pipeline
@@ -221,3 +247,33 @@ products = pd.DataFrame({
 #       monthly revenue trend (groupby by month)
 # - Method run() that chains everything and
 #       prints a complete startup analytics report
+
+
+
+class StartupPieline:
+    def __init__(self , transactions , users , products):
+        self.transactions= transactions
+        self.users=users
+        self.products= products
+    def extract_and_merge(self):
+        final_df = pd.merge( self.transactions,  self.users, on="user_id", how="left")
+        final_df = pd.merge(final_df, self.products,on="product_id",how="left")
+        return final_df
+
+    def clean(self):
+
+        df = self.extract_and_merge()
+        
+        df["user_missing"] = df[["username", "tier"]].isnull().any(axis=1)
+        df["product_missing"] = df[["name", "category", "unit_price"]].isnull().any(axis=1)
+        df["amount"] = df["amount"].fillna(df.groupby("category")["amount"].transform("median"))
+        df["username"] = df["username"].fillna("Unknown")
+        df["tier"] = df["tier"].fillna("Unknown")
+        df["name"] = df["name"].fillna("Unknown")
+        df["category"] = df["category"].fillna("Unknown")
+
+        return df
+            
+sp=StartupPieline(transactions , users , products)
+print("\nTHE MERGED DATA FRAME IS :\n",sp.extract_and_merge())
+print("\nTHE RESULTANT DATA FRAME IS : \n", sp.clean())
