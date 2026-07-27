@@ -273,7 +273,58 @@ class StartupPieline:
         df["category"] = df["category"].fillna("Unknown")
 
         return df
-            
-sp=StartupPieline(transactions , users , products)
-print("\nTHE MERGED DATA FRAME IS :\n",sp.extract_and_merge())
-print("\nTHE RESULTANT DATA FRAME IS : \n", sp.clean())
+
+
+    def transform(self):
+        df=self.extract_and_merge()
+        df=self.clean()
+        df["txn_date"]=pd.to_datetime(df["txn_date"])
+        df["year"]=df["txn_date"].dt.year
+        df["month"]=df["txn_date"].dt.month
+        df["effective_amount"] = df.apply(lambda row: row["amount"] * (1.1 if row["tier"] == "Gold" else 1.0 if row["tier"] == "Silver"else 0.9 if row["tier"] == "Bronze"else 1.0),axis=1)
+        return df
+        
+
+
+    def analyze(self):
+        df = self.transform()
+        category_revenue = (df.groupby("category")["effective_amount"].sum().reset_index())
+        tier_revenue = (df.groupby("tier")["effective_amount"].sum().reset_index())
+        monthly_revenue = (df.groupby("month")["effective_amount"].sum().reset_index())
+        return category_revenue, tier_revenue, monthly_revenue
+        
+
+
+
+    def run(self):
+        print("========== STARTUP ANALYTICS REPORT ==========\n")
+        merged_df = self.extract_and_merge()
+        print("Merged Data:")
+        print(merged_df)
+
+        clean_df = self.clean()
+        print("\nCleaned Data:")
+        print(clean_df)
+
+        transformed_df = self.transform()
+        print("\nTransformed Data:")
+        print(transformed_df)
+
+        category_revenue, tier_revenue, monthly_revenue = self.analyze()
+
+        print("\nRevenue by Category")
+        print(category_revenue)
+
+        print("\nRevenue by Tier")
+        print(tier_revenue)
+
+        print("\nMonthly Revenue Trend")
+        print(monthly_revenue)
+
+        print("\n========== END OF REPORT ==========")
+
+
+
+sp = StartupPieline(transactions, users, products)
+
+sp.run()
