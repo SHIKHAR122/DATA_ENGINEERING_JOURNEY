@@ -78,7 +78,7 @@ orders = pd.DataFrame({
         "2026-01-05",
         "2026-01-12",
         "2026-02-10",
-        "2026-02-15",
+        "2026-02-15", 
         "2026-03-01",
         "2026-03-18",
         "2026-03-20",
@@ -263,17 +263,11 @@ class EcommercePipeline:
         return df
 
     def clean (self):
-        df=self.extract()
-        flagged_df=df.copy()
-        flagged_df["Reason"]=""
+       df=self.extract()
 
-        
-        for col in df.columns:
-            if df[col].dtype == "object":
-                df[col] = df[col].fillna("Unknown")
-            else:
-                df[col] = df[col].fillna(df[col].median())
-                return df
+
+
+   
 
 
 
