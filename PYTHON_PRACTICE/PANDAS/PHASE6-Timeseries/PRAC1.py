@@ -39,24 +39,62 @@ daily_sales = pd.DataFrame({
 #       takes two date strings like "2026-02-01"
 #       returns only rows within that date range
 #       using boolean filtering on the date column
-#
-# - Method run() that calls all methods and
-#       prints a clean time series report
+
 
 # YOUR CODE HERE:
 
 
-class SalesTimeSeries :
-    def __init__(self ,daily_sales):
-        self.daily_sales=daily_sales
+df=pd.DataFrame(daily_sales)
+print(df.head(11))
+
+
+class SalesTimeSeries:
+
+    def __init__(self, df):
+        self.df = df
 
     def monthly_revenue(self):
-        monthly=(daily_sales.resample("ME" , on="date")["revenue"].sum())
+        return (self.df.resample("ME", on="date")[["revenue","orders"]].sum())
+
+    def best_month(self):
+        monthly = self.monthly_revenue()
+        return monthly["revenue"].idxmax()
+
+    def add_time_features(self):
+        self.df["date"] = pd.to_datetime(self.df["date"])
+        self.df["year"] = self.df["date"].dt.year
+        self.df["month_name"] = self.df["date"].dt.month_name()
+        self.df["weekday_name"] = self.df["date"].dt.day_name()
+        self.df["weekday"] = self.df["date"].dt.weekday
+        self.df["quarter"] = self.df["date"].dt.quarter
+
+        return self.df
+
+    def weekend_vs_weekday(self):
+        df = self.add_time_features()
+        df["day_type"] = df["weekday"].apply( lambda x: "Weekend" if x >= 5 else "Weekday")
+
+        return df.groupby("day_type")["revenue"].mean()
 
 
-        return monthly
+    def date_range_filter(self, start, end):
+
+        df = self.df.copy()
+        df["date"] = pd.to_datetime(df["date"])
+        filtered_df = df[(df["date"] >= start) & (df["date"] <= end)]
+        return filtered_df
+
+        
+
+
+    def run(self):
+        print("MONTHLY REVENUE:\n", self.monthly_revenue())
+        print("BEST MONTH:", self.best_month())
+        print("TIME FEATURES:\n", self.add_time_features())
+        print("WEEKEND VS WEEKDAY:\n", self.weekend_vs_weekday())
+        print("DATE FILTER:\n", self.date_range_filter("2026-02-01", "2026-04-30"))
 
 
 
-st=SalesTimeSeries(daily_sales)
-print("\n \n" , st.monthly_revenue())
+sc=SalesTimeSeries(df)
+print(sc.run())
