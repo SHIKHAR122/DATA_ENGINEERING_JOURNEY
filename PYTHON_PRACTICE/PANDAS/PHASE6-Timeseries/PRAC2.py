@@ -71,14 +71,15 @@ print("\n THE AVERAGE DELIVERY DAYS PER COURIER IS : \n" ,sa.avg_delivery_by_cou
 print("\n THE DETAILS OF DELIVERY THAT TOOK PART AFTER THE THRESHOLD DATE IS :\n" ,sa.delivered_after("2026-02-28"))
 # ============================================
 # QUESTION 2 — resample() Advanced
-# A stock tracking system records daily prices
-# stock_data = pd.DataFrame({
-#     "date": pd.date_range(start="2026-01-01", end="2026-06-30", freq="B"),
-#     "stock": np.random.choice(["RELIANCE", "TCS", "INFOSYS"], size=130),
-#     "open_price": np.random.randint(1000, 5000, size=130),
-#     "close_price": np.random.randint(1000, 5000, size=130),
-#     "volume": np.random.randint(100000, 1000000, size=130)
-# })
+dates = pd.date_range(start="2026-01-01", end="2026-06-30", freq="B")
+n = len(dates)
+stock_data = pd.DataFrame({
+    "date": dates,
+    "stock": np.random.choice(["RELIANCE", "TCS", "INFOSYS"], size=n),
+    "open_price": np.random.randint(1000, 5000, size=n),
+    "close_price": np.random.randint(1000, 5000, size=n),
+    "volume": np.random.randint(100000, 1000000, size=n)
+})
 
 # Build a class StockAnalyzer with:
 # - Method daily_return() that:
@@ -93,32 +94,61 @@ print("\n THE DETAILS OF DELIVERY THAT TOOK PART AFTER THE THRESHOLD DATE IS :\n
 #       returns mean open, mean close, sum volume
 # - Method best_trading_day() that:
 #       returns the date with highest volume
-# - Method run()
 
 # YOUR CODE HERE:
+df2=pd.DataFrame(stock_data)
+
+class StockAnalyzer:
+    def __init__(self,df2):
+        self.df2=df2
 
 
+    def daily_returns(self):
+        df2["daily_return"]=((df2["close_price"]-df2["open_price"]/df2["open_price"])*100)
+        return df2
+
+
+    def weekly_summary(self):
+        weekly_dataframe=df2.resample("W", on="date").agg({"open_price":"mean","close_price":"mean" , "volume":"sum"})
+        return weekly_dataframe
+
+
+    def monthly_summary(self):
+        monthly_dataframe=df2.resample("ME",on="date").agg({"open_price":"mean","close_price":"mean" , "volume":"sum"})
+        return monthly_dataframe
+
+    def best_trading_day(self):
+        best_day=df2["volume"].idxmax()
+
+        return df2.loc[best_day]
+
+sa=StockAnalyzer(df2)
+print("\nTHE DAILY RETURN FOR THE GIVEN STOCK DATA IS: \n",sa.daily_returns())
+print("\n THE WEEKLY REPORT FOR THE GIVEN STOCK DATA IS :\n",sa.weekly_summary())
+print("\n THE MONTHLY REPORT FOR THE GIVEN STOCK DATA IS :\n",sa.monthly_summary())
+print("\n THE BEST TO TRADE IS :\n",sa.best_trading_day())
 # ============================================
 # QUESTION 3 — DateTime Filtering + Merging
 # An e-commerce platform has order and
 # customer data with time-based analysis needed.
 
-# orders = pd.DataFrame({
-#     "order_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-#     "customer_id": [101, 102, 101, 103, 102, 104, 101, 103, 104, 102],
-#     "amount": [5000, 3000, 8000, 2000, 6000, 4000, 7000, 3500, 5500, 2500],
-#     "order_date": ["2026-01-10", "2026-01-25", "2026-02-05",
-#                   "2026-02-20", "2026-03-01", "2026-03-15",
-#                   "2026-04-10", "2026-04-22", "2026-05-05", "2026-05-18"]
-# })
+orders = pd.DataFrame({
+    "order_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "customer_id": [101, 102, 101, 103, 102, 104, 101, 103, 104, 102],
+    "amount": [5000, 3000, 8000, 2000, 6000, 4000, 7000, 3500, 5500, 2500],
+    "order_date": ["2026-01-10", "2026-01-25", "2026-02-05",
+                  "2026-02-20", "2026-03-01", "2026-03-15",
+                  "2026-04-10", "2026-04-22", "2026-05-05", "2026-05-18"]
+})
 
-# customers = pd.DataFrame({
-#     "customer_id": [101, 102, 103, 104],
-#     "name": ["Shikhar", "Rahul", "Priya", "Aditya"],
-#     "city": ["Delhi", "Mumbai", "Delhi", "Kanpur"],
-#     "signup_date": ["2025-12-01", "2025-11-15",
-#                    "2026-01-01", "2025-10-20"]
-# })
+customers = pd.DataFrame({
+    "customer_id": [101, 102, 103, 104],
+    "name": ["Shikhar", "Rahul", "Priya", "Aditya"],
+    "city": ["Delhi", "Mumbai", "Delhi", "Kanpur"],
+    "signup_date": ["2025-12-01", "2025-11-15",
+                   "2026-01-01", "2025-10-20"]
+})
+
 
 # # # Build a class CustomerOrderAnalyzer with:
 # # - Method prepare() that:
@@ -145,7 +175,36 @@ print("\n THE DETAILS OF DELIVERY THAT TOOK PART AFTER THE THRESHOLD DATE IS :\n
 # # - Method run()
 
 # # YOUR CODE HERE:
+class CustomerOrderAnalyzer:
 
+    def __init__(self, customers, orders):
+        self.customers = customers
+        self.orders = orders
+
+    def prepare(self):
+        self.merged_df = pd.merge(  self.orders,  self.customers, on="customer_id",how="left")
+        self.merged_df["order_date"] = pd.to_datetime(self.merged_df["order_date"])
+        self.merged_df["signup_date"] = pd.to_datetime(self.merged_df["signup_date"])
+        self.merged_df["days_since_signup"] = (self.merged_df["order_date"] - self.merged_df["signup_date"]).dt.days
+        self.merged_df["month"] = self.merged_df["order_date"].dt.month
+        self.merged_df["quarter"] = self.merged_df["order_date"].dt.quarter
+
+        return self.merged_df
+
+    def q1_orders(self):
+        quarter1_orders_df = self.prepare()
+        quarter1_orders_df = quarter1_orders_df[quarter1_orders_df["quarter"] == 1]
+        return quarter1_orders_df
+
+    def customer_lifetime_spend(self):
+        self.data=self.q1_orders()
+        self.data=self.data.groupby("customer_id")["amount"].sum().sort_values(ascending=False)
+        return self.data
+    
+coa=CustomerOrderAnalyzer(customers=customers , orders=orders)
+print("\n THE MERGED DATA FRAME IS : \n",coa.prepare())
+print("\n THE QUARTERLY DATA FROM THE DATA FRAME IS : \n",coa.q1_orders())
+print("\n THE TOTAL SPEND PER CUSTOMER IS : \n",coa.customer_lifetime_spend())
 
 # # ============================================
 # # QUESTION 4 — HARDEST — Full Time Series Pipeline
