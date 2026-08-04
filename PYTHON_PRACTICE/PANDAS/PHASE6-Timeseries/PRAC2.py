@@ -277,12 +277,122 @@ users = pd.DataFrame({
 # #       average number of activities
 # # - Method run()
 
-class SaaSAnalytics :
-    def __init__(self , user_activity , users):
-        self.users=users
-        self.user_activity=user_activity
+class SaaSAnalytics:
 
+    def __init__(self, user_activity, users):
+        self.user_activity = user_activity
+        self.users = users
 
     def prepare(self):
-        
- 
+        df = pd.merge(
+            self.user_activity,
+            self.users,
+            on="user_id",
+            how="left"
+        )
+
+        df["activity_date"] = pd.to_datetime(df["activity_date"])
+        df["signup_date"] = pd.to_datetime(df["signup_date"])
+
+        df["days_active"] = (
+            df["activity_date"] - df["signup_date"]
+        ).dt.days
+
+        df["month"] = df["activity_date"].dt.month
+        df["quarter"] = df["activity_date"].dt.quarter
+        df["weekday_name"] = df["activity_date"].dt.day_name()
+
+        return df
+
+    def activity_trend(self):
+        df = self.prepare()
+
+        activity_df = (
+            df.groupby(
+                [
+                    pd.Grouper(key="activity_date", freq="ME"),
+                    "activity_type"
+                ]
+            )
+            .size()
+            .reset_index(name="count")
+        )
+
+        return activity_df
+
+    def revenue_by_plan(self):
+        df = self.prepare()
+
+        revenue_df = (
+            df[df["revenue"] > 0]
+            .groupby("plan")["revenue"]
+            .sum()
+            .reset_index()
+        )
+
+        return revenue_df
+
+    def weekly_active_users(self):
+        df = self.prepare()
+
+        weekly_users = (
+            df.resample("W", on="activity_date")["user_id"]
+            .nunique()
+            .reset_index(name="active_users")
+        )
+
+        return weekly_users
+
+    def churn_risk_flag(self):
+        df = self.prepare()
+
+        last_activity = (
+            df.groupby("user_id")["activity_date"]
+            .max()
+            .reset_index(name="last_activity")
+        )
+
+        latest_date = df["activity_date"].max()
+
+        last_activity["days_since_last_activity"] = (
+            latest_date - last_activity["last_activity"]
+        ).dt.days
+
+        last_activity["status"] = last_activity[
+            "days_since_last_activity"
+        ].apply(
+            lambda x: "At Risk" if x > 30 else "Active"
+        )
+
+        return last_activity
+
+    def peak_activity_day(self):
+        df = self.prepare()
+
+        peak_day = (
+            df.groupby("weekday_name")
+            .size()
+            .idxmax()
+        )
+
+        return peak_day
+
+    def run(self):
+
+        print("\n========== PREPARED DATA ==========\n")
+        print(self.prepare())
+
+        print("\n========== MONTHLY ACTIVITY TREND ==========\n")
+        print(self.activity_trend())
+
+        print("\n========== REVENUE BY PLAN ==========\n")
+        print(self.revenue_by_plan())
+
+        print("\n========== WEEKLY ACTIVE USERS ==========\n")
+        print(self.weekly_active_users())
+
+        print("\n========== CHURN RISK ==========\n")
+        print(self.churn_risk_flag())
+
+        print("\n========== PEAK ACTIVITY DAY ==========\n")
+        print(self.peak_activity_day())
