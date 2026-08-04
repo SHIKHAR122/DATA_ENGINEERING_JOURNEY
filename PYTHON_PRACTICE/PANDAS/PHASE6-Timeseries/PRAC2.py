@@ -200,41 +200,55 @@ class CustomerOrderAnalyzer:
         self.data=self.q1_orders()
         self.data=self.data.groupby("customer_id")["amount"].sum().sort_values(ascending=False)
         return self.data
-    
+
+    def monthly_city_revenue(self):
+        self.revenue=self.prepare()
+        self.revenue=self.revenue.groupby(["city","month"])["amount"].sum().reset_index()
+        return self.revenue
+
+    def early_vs_late_adopters(self):
+        df = self.prepare()
+        df["adopter_type"] = df["signup_date"].apply( lambda x: "Early" if x.year < 2026 else "Late")
+        result = ( df.groupby("adopter_type")["amount"].mean().reset_index())
+        return  result 
+
+
+        
 coa=CustomerOrderAnalyzer(customers=customers , orders=orders)
 print("\n THE MERGED DATA FRAME IS : \n",coa.prepare())
 print("\n THE QUARTERLY DATA FROM THE DATA FRAME IS : \n",coa.q1_orders())
 print("\n THE TOTAL SPEND PER CUSTOMER IS : \n",coa.customer_lifetime_spend())
-
+print("\n THE REVENUE GENERATED IN EACH CITY PER MONTH IS : \n",coa.monthly_city_revenue())
+print("\n THE ADOPT STYLE OF EACH CUSTOMER ALONG WITH THEIR AVERAGE IS :\n",coa.early_vs_late_adopters())
 # # ============================================
 # # QUESTION 4 — HARDEST — Full Time Series Pipeline
 # # A SaaS company tracks user activity daily.
 # # Build a complete time series analytics system.
 
-# np.random.seed(42)
-# user_activity = pd.DataFrame({
-#     "activity_id": range(1, 201),
-#     "user_id": np.random.choice([1001, 1002, 1003, 1004, 1005], size=200),
-#     "activity_date": pd.date_range(
-#         start="2026-01-01", periods=200, freq="D"
-#     )[:200],
-#     "activity_type": np.random.choice(
-#         ["login", "purchase", "support_ticket"], size=200
-#     ),
-#     "revenue": np.where(
-#         np.random.choice(["purchase", "other"], size=200) == "purchase",
-#         np.random.randint(1000, 20000, size=200),
-#         0
-#     )
-# })
+np.random.seed(42)
+user_activity = pd.DataFrame({
+    "activity_id": range(1, 201),
+    "user_id": np.random.choice([1001, 1002, 1003, 1004, 1005], size=200),
+    "activity_date": pd.date_range(
+        start="2026-01-01", periods=200, freq="D"
+    )[:200],
+    "activity_type": np.random.choice(
+        ["login", "purchase", "support_ticket"], size=200
+    ),
+    "revenue": np.where(
+        np.random.choice(["purchase", "other"], size=200) == "purchase",
+        np.random.randint(1000, 20000, size=200),
+        0
+    )
+})
 
-# users = pd.DataFrame({
-#     "user_id": [1001, 1002, 1003, 1004, 1005],
-#     "username": ["Shikhar", "Rahul", "Priya", "Aditya", "Sneha"],
-#     "plan": ["Pro", "Free", "Pro", "Enterprise", "Free"],
-#     "signup_date": ["2025-10-01", "2025-11-15",
-#                    "2025-12-01", "2025-09-01", "2026-01-01"]
-# })
+users = pd.DataFrame({
+    "user_id": [1001, 1002, 1003, 1004, 1005],
+    "username": ["Shikhar", "Rahul", "Priya", "Aditya", "Sneha"],
+    "plan": ["Pro", "Free", "Pro", "Enterprise", "Free"],
+    "signup_date": ["2025-10-01", "2025-11-15",
+                   "2025-12-01", "2025-09-01", "2026-01-01"]
+})
 
 # # Build a class SaaSAnalytics with:
 # # - Method prepare() that:
@@ -262,3 +276,13 @@ print("\n THE TOTAL SPEND PER CUSTOMER IS : \n",coa.customer_lifetime_spend())
 # #       returns which weekday has the highest
 # #       average number of activities
 # # - Method run()
+
+class SaaSAnalytics :
+    def __init__(self , user_activity , users):
+        self.users=users
+        self.user_activity=user_activity
+
+
+    def prepare(self):
+        
+ 
