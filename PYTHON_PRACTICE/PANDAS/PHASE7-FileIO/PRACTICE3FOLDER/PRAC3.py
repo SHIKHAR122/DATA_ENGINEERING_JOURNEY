@@ -24,3 +24,4 @@ for chunk in pd.read_sql("SELECT * FROM  practice3" , engine  , chunksize=1000):
 print("THE TOTAL SALARY ACROSS ALL THE CHUNKS IS : " , total_salary)
 direct_sum= pd.read_sql_query("SELECT SUM(salary) AS total_salary FROM practice3 " , engine )
 print(" THE DIRECT SUM OF THE SALARY USING SQL QUERY IS : " , direct_sum)
+
