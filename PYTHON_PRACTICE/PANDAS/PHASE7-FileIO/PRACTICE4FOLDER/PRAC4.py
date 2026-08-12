@@ -1,6 +1,6 @@
 # ============================================
 # PANDAS PHASE 6 — SQL + Pandas Integration
-# Date: 11 August 2026
+# Date: 11  August 2026
 # Topics: to_sql, read_sql, chunksize,
 # if_exists, text(), parameterized queries,
 # engine.connect() for UPDATE/DELETE
@@ -142,7 +142,7 @@ class RailwayPipeline:
 
 
 
-    from sqlalchemy import text
+    
 
     def read_by_route(self, source, destination):
         query = text(""" SELECT * FROM train_delays WHERE destination = :destination AND source = :source""")
@@ -164,7 +164,7 @@ class RailwayPipeline:
         total_rows=0
         for chunk in pd.read_sql("SELECT * FROM train_delays" , self.engine , chunksize=chunksize):
                 total_delays+=chunk["delay_minutes"].sum()
-                total_rows=len(chunk)
+                total_rows+=len(chunk)
                 avg_delay=total_delays / total_rows
                 print(f"Average delay = {avg_delay:.2f} minutes")
 
@@ -172,23 +172,55 @@ class RailwayPipeline:
 
 
 
-    def update_delays(self , train_no , new_delay):
-        pass
+    def update_delays(self , new_delay , train_no):
+            query=text(""" UPDATE train_delays SET delay_minutes = :new_delay WHERE train_no =  :train_no """)
+            with self.engine.connect() as comm:
+                 comm.execute(query , {
+                      "new_delay": new_delay , 
+                      "train_no":train_no
+                 })
+                 comm.commit()
+            print(f"UPDATED THE DELAY TIME OF TRAIN NUMBER {train_no}  TO {new_delay} MINUTES ")
+
+
+    def summarise_stats(self):
+         read_data=pd.read_sql("SELECT * FROM train_delays" , self.engine )
+         average_df=read_data.groupby("source")["delay_minutes"].mean()
+         count_df=(read_data[read_data["delay_minutes"]>0].groupby("destination")["train_no"].count())
+         most_delayed=read_data.loc[read_data["delay_minutes"].idxmax()]
+         return average_df , count_df  , most_delayed 
+
+    
+
 
 
 
 
     def run(self):
+
         self.load(raw_batch_1, "batch_1")
         self.load(raw_batch_2, "batch_2")
+
         print("\n========== ALL TRAIN DATA ==========")
         print(self.read_all())
+
         print("\n========== DELHI → MUMBAI ==========")
         print(self.read_by_route("Delhi", "Mumbai"))
+
         print("\n========== DELAYS > 30 MINUTES ==========")
         print(self.read_delayed_only(30))
 
+        print("\n========== UPDATING TRAIN ==========")
+        self.update_delays(50 , "12309")
 
+        print("\n========== SUMMARY STATISTICS ==========")
+        average_df, count_df, most_delayed = self.summarise_stats()
+        print("\n--- Average Delay by Source Station ---")
+        print(average_df)
+        print("\n--- Number of Delayed Trains by Destination ---")
+        print(count_df)
+        print("\n--- Most Delayed Train ---")
+        print(most_delayed)
 
 
 pipeline = RailwayPipeline(engine)
