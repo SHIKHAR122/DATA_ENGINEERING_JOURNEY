@@ -194,8 +194,6 @@ class RailwayPipeline:
 
 
 
-
-
     def run(self):
 
         self.load(raw_batch_1, "batch_1")
