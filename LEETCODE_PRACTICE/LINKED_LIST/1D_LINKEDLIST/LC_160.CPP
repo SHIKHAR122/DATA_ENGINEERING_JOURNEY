@@ -1,0 +1,34 @@
+// LEETCODE PROBLEM NUMBER 160 - INTERSECTION OF TWO LINKED LISTS 
+
+// APPROACH NUMBER 1 - USING THE TWO POINTERS 
+// IN THIS APPROACH WE WILL KEEP TWO POINTERS , ONE AT THE HEAD OF LIST1 AND OTHER AT THE HEAD OF THE LIST 2 
+// AND WE WILL KEEP MOVING THEM , SEARCHING FOR THE ELEMENT THAT OCCURS IN BOTH THE LISTNODES , IF ANY OF THE LISTS 
+// REACHES A POINT WHERE THE POINTER POINTS TO NULL THEN MAKE SURE TO POINT THAT PARTICULAR POINTER TO THE HEAD OF THE
+// OTHER NODE LIST'S HEAD AND KEEP SEARCHING , IF FOUND THEN RETURN ANY OF THE POINNTERS
+
+
+
+class Solution {
+public:
+	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+		ListNode *ptr1 = headA;
+		ListNode *ptr2 = headB;
+		while(ptr1 != ptr2){
+			if(ptr1 == NULL){
+				ptr1 = headB;
+			}
+			else{
+				ptr1 = ptr1 -> next;
+			}
+			if(ptr2 == NULL){
+				ptr2 = headA;
+			}
+			else{
+				ptr2 = ptr2 -> next;
+			}
+		}
+		return ptr1;
+	}
+};
+
+
