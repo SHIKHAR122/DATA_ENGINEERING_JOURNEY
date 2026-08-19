@@ -1,14 +1,3 @@
-"""
-============================================================
-SQLAlchemy CORE — Practice Exercises 1-7
-============================================================
-Do these ONE AT A TIME. Write the code yourself, run it,
-check the result in SQLTools before moving to the next.
-Don't skip the "predict before running" steps — that's
-where the actual learning happens, not in the typing.
-============================================================
-"""
-
 # ============================================================
 # EXERCISE 1 — Read all rows from a different table
 # ============================================================
@@ -19,7 +8,6 @@ where the actual learning happens, not in the typing.
 # GOAL: Prove you can repeat the connect -> execute -> loop
 #       pattern without copying test_connection.py blindly.
 # ============================================================
-
 # --- write your code here ---
 import pandas as pd
 from main import engine 
@@ -55,7 +43,6 @@ with engine.connect() as conn:
 # GOAL: Apply Topic 6 (parameterized queries) for real,
 #       not just recognize the syntax.
 # ============================================================
-
 # --- write your code here ---
 with engine.connect() as conn:
     query = text("SELECT station_name, city FROM stations WHERE state = :state")
@@ -108,3 +95,4 @@ with engine.connect() as conn:
     query3=conn.execute(text("SELECT * FROM stations"))
     df3=pd.DataFrame(query3.fetchall() , columns=query3.keys())
     print(df3)
+
