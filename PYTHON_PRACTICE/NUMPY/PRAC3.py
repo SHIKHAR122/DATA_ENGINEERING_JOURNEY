@@ -131,8 +131,37 @@ train_no  = np.array(["12301","12302","12303",
 #        what a negative delay means here)
 
 # YOUR CODE HERE:
+class ArrivalAnalyzer:
+    def __init__(self , scheduled , actual , train_no ):
+        self.scheduled=scheduled
+        self.actual=actual
+        self.train_no=train_no
 
+    def compute_delay(self):
+        delay_array=self.actual - self.scheduled
+        return delay_array 
 
+    def stats(self , delay_array):
+        delay_stats = {
+        "mean": round(np.mean(delay_array),2),
+        "median": round(np.median(delay_array),2),
+        "std": round(np.std(delay_array),2),
+        "var": round(np.var(delay_array),2)
+    }
+        return delay_stats
+
+    def most_delayed(self, delay_array):
+        return self.train_no[np.argmax(delay_array)]
+
+    def most_on_time(self,delay_array):
+        return self.train_no[np.argmin(delay_array)]
+        
+    
+aa=ArrivalAnalyzer(scheduled , actual , train_no)
+print(aa.compute_delay())
+print(aa.stats(delay_array=delay))
+print("THE MOST DELAYED TRAIN IS : " , aa.most_delayed(delay_array=delay))
+print("THE MOST PUNCTUAL TRAIN IS : ",aa.most_on_time(delay_array=delay))
 # ============================================
 # QUESTION 4 - HARDEST - NumPy + Pandas Combined
 # A weekly report needs both filtering and stats,
@@ -163,7 +192,40 @@ weekly_data = pd.DataFrame({
 #       creates a 2D boolean array comparing every
 #       delay against every other delay using
 #       broadcasting: delay_array[:, None] > delay_array
-#       print the resulting matrix and explain in
-#       a comment what row 0 of that matrix tells you
 
 # YOUR CODE HERE:
+class WeeklyReport:
+    def __init__(self , weekly_data):
+        self.weekly_data=weekly_data
+
+    def get_delay_array(self):
+        delay_minutes= self.weekly_data["delay_minutes"].to_numpy(dtype="int32")
+        return delay_minutes
+
+    def platform_filter(self,platform_no):
+        platform=self.weekly_data["platform"].to_numpy(dtype="int32")
+        train_no=self.weekly_data["train_no"].to_numpy(dtype="int32")
+
+        return train_no[platform==platform_no]
+
+    def weekly_stats(self):
+        delay=self.get_delay_array()
+        stats={
+            "mean": np.mean(delay) , 
+            "median":np.median(delay) , 
+            "std":np.std(delay) , 
+            "variance":np.var(delay)
+        }
+        return stats
+
+    def comparison_matrix(self):
+        delay_array = self.get_delay_array()
+        return delay_array[:, None] > delay_array
+
+
+
+wr=WeeklyReport(weekly_data)
+print("THE DELAYED ARRAY IS :",wr.get_delay_array())
+print("THE PLATFORMS FOR THE GIVEN TRAIN NUMBER ARE : " , wr.platform_filter(1))
+print("\n THE WEEKLY STATS OF THE STATION IS : \n",wr.weekly_stats())
+print("\n THE COMPARISON MATRIX FOR THE GIVEN DATA IS : \n" ,wr.comparison_matrix())
