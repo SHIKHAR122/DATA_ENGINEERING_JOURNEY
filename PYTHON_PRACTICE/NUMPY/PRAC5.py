@@ -120,3 +120,5 @@ print(dm.sort_by_delay)
 print(dm.unique_delay_values())
 print(dm.weighted_score())
 print(dm.side_by_side_reports())
+
+
