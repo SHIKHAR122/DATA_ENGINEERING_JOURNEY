@@ -31,8 +31,6 @@ ticket_prices = np.array([4500, 2000, 1200, 800, 1500, 6000, 2500, 1800, 3000, 9
 
 # Using this data, answer the following:
 
-# 4. Combine `venue_is_outdoor` into the risk score itself — an event with the exact same rainfall numbers should score meaningfully higher risk if it's outdoor than if it's indoor. Produce one final ranked list, from highest risk to lowest, showing event name, final risk score, and ticket price.
-# 5. Sort the final output by risk score, and separately identify which single event has the highest ticket price *among only the top 3 riskiest events* — not the highest price overall.
 
 # **Expected output:** two lists from Q1, a transposed array plus a True/False memory-sharing answer from Q2, a 10-value risk score array from Q3, a ranked table (event, risk score, price) from Q4, and one event name answering Q5.
 
@@ -60,23 +58,28 @@ print("THE RELATION BETWEEN THE ORIGINAL ARRAY AND THE TRANSPOSED MATRIX IS : " 
 
 # 3. Compute a single **weather risk score** per event, where the last day's rainfall probability matters more than the first day's (assume the days closer to the event should count more heavily — you decide how to weight them, and justify your choice).
 risk_score=list()
+weights= np.array([0.10 , 0.15 , 0.20 , 0.25 , 0.30])
 for row in rainfall_probability:
-    if row[len(row)-1]>0 and row[len(row)-1]<30:
-        risk_score.append("LOW")
-    elif row[len(row)-1]>=31 and row[len(row)-1]<=50:
-        risk_score.append("MID")
-    else: 
-        risk_score.append("HIGH")
+    score = np.dot(row , weights)
+    risk_score.append(score)
 
-
-
-print(risk_score)
+print("THE RISK SCORE FOR EACH EVENT IS :" ,risk_score)
 
 
     
 
+# 4. Combine `venue_is_outdoor` into the risk score itself — an event with the exact same rainfall numbers should score meaningfully higher risk if it's outdoor than if it's indoor. Produce one final ranked list, from highest risk to lowest, showing event name, final risk score, and ticket price.
 
 
+final_risk=[]
+for i in range (len(risk_score)):
+    if venue_is_outdoor[i]==1:
+        final_risk.append([event_names[i] , risk_score[i]*1.20  , ticket_prices[i]])
+    else:
+        final_risk.append([event_names[i] , risk_score[i], ticket_prices[i]])
+
+
+print("\n THE FINAL LIST IS :\n" ,final_risk)
 
 
 
