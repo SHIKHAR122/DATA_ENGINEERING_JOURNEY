@@ -2,7 +2,6 @@
 
 # Ten upcoming outdoor events have been pulled from your API, along with 5 days of historical rainfall probability (%) leading up to each event's date, sourced from Open-Meteo.
 
-# ```python
 import numpy as np
 
 event_names = np.array([
@@ -77,7 +76,6 @@ for i in range (len(risk_score)):
         final_risk.append([event_names[i] , risk_score[i]*1.20  , ticket_prices[i]])
     else:
         final_risk.append([event_names[i] , risk_score[i], ticket_prices[i]])
-
 
 print("\n THE FINAL LIST IS :\n" ,final_risk)
 
