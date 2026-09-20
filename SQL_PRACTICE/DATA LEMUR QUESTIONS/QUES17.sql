@@ -17,6 +17,7 @@
 
 
 
+
 SELECT
      DISTINCT t1.user_id
 FROM transactions AS T1
