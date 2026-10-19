@@ -86,7 +86,7 @@ class Solution
                 minimum_penalty=penalty;
                 hours=i+1;
             }   
-        }
+        } 
             return hours;
           }  
     };
