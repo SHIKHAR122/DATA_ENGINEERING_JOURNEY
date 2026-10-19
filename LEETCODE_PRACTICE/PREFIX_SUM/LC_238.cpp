@@ -21,7 +21,7 @@ public:
         suffix[n - 1] = 1;
 
         for (int i = n - 2; i >= 0; i--) {
-            s *= nums[i + 1];
+            s *= nums[i  + 1];
             suffix[i] = s;
         }
 
