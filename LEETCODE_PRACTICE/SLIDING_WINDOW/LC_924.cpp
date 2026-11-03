@@ -37,5 +37,5 @@ int main()
         Solution sol;
         vector<int>nums;
         int goal;
-        sol.numSubarraysWithSum(nums  , goal);
+        cout<<sol.numSubarraysWithSum(nums  , goal);
 }
