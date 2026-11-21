@@ -5,7 +5,7 @@ class Solution
     public:
            int priority(char value)
            {
-                if(value=='+'||value=='-')
+                if(value=='+'||value=='-') 
                 {
                     return 1;
                 }
